@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News Shorts — Live</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;1,400&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent: #ff2d2d;
+  --bg: #080810;
+  --panel: #0f0f18;
+  --border: #1e1e2e;
+  --text: #e8e8f0;
+  --muted: #555570;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: 'Barlow Condensed', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+
+.topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 28px; border-bottom:1px solid var(--border); background:#0a0a14; }
+.topbar-logo { font-family:'Oswald',sans-serif; font-size:20px; font-weight:700; letter-spacing:5px; color:#fff; }
+.topbar-logo span { color:var(--accent); }
+.live-dot { display:inline-block; width:8px; height:8px; background:var(--accent); border-radius:50%; margin-right:6px; animation:blink 1.4s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+.topbar-status { font-size:12px; color:var(--muted); letter-spacing:1px; font-family:'Roboto Mono',monospace; }
+
+.main { display:flex; flex:1; overflow:hidden; }
+
+.sidebar { width:320px; min-width:320px; background:var(--panel); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+.sidebar-top { padding:20px; border-bottom:1px solid var(--border); display:flex; flex-direction:column; gap:12px; }
+.label { font-size:10px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; font-family:'Roboto Mono',monospace; margin-bottom:4px; }
+
+.niche-pills { display:flex; gap:6px; flex-wrap:wrap; }
+.pill { padding:5px 12px; border-radius:2px; font-size:12px; font-weight:600; letter-spacing:1px; cursor:pointer; border:1px solid var(--border); color:var(--muted); transition:all 0.15s; text-transform:uppercase; }
+.pill.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.pill:hover:not(.active) { border-color:#444; color:#aaa; }
+
+.fetch-btn { display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; background:var(--accent); color:#fff; border:none; border-radius:3px; font-family:'Oswald',sans-serif; font-size:15px; font-weight:700; letter-spacing:3px; cursor:pointer; transition:all 0.15s; text-transform:uppercase; }
+.fetch-btn:hover { background:#ff4444; }
+.fetch-btn:disabled { background:#333; color:#666; cursor:not-allowed; }
+.spin { animation:spin 0.8s linear infinite; display:inline-block; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.news-list { flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:8px; }
+.news-list::-webkit-scrollbar { width:4px; }
+.news-list::-webkit-scrollbar-thumb { background:#222; border-radius:2px; }
+
+.news-card { padding:12px; background:#13131e; border:1px solid var(--border); border-radius:3px; cursor:pointer; transition:all 0.15s; }
+.news-card:hover { border-color:#333; background:#16161f; }
+.news-card.selected { border-color:var(--accent); background:rgba(255,45,45,0.05); }
+.card-category { font-size:9px; letter-spacing:2px; font-weight:700; color:var(--accent); text-transform:uppercase; margin-bottom:5px; }
+.card-headline { font-family:'Oswald',sans-serif; font-size:14px; font-weight:600; line-height:1.3; color:#ddd; text-transform:uppercase; }
+.card-sub { font-size:12px; color:var(--muted); margin-top:5px; line-height:1.4; }
+.card-source { font-size:10px; color:#444; margin-top:6px; font-family:'Roboto Mono',monospace; }
+
+.empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; gap:10px; color:var(--muted); padding:40px 20px; text-align:center; }
+.empty-icon { font-size:36px; opacity:0.3; }
+.empty-text { font-size:13px; letter-spacing:1px; }
+
+.center { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px; gap:16px; position:relative; overflow:hidden; }
+.center::before { content:''; position:absolute; width:400px; height:400px; background:radial-gradient(circle,rgba(255,45,45,0.04) 0%,transparent 70%); pointer-events:none; }
+.preview-tag { font-size:10px; letter-spacing:3px; color:#333; text-transform:uppercase; font-family:'Roboto Mono',monospace; }
+
+.shorts-frame { width:270px; height:480px; position:relative; overflow:hidden; border-radius:14px; background:#000; box-shadow:0 0 80px rgba(255,45,45,0.12), 0 0 0 1px #1a1a28; }
+.s-bg { position:absolute; inset:0; transition:background 0.4s; }
+.s-scanlines { position:absolute; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px); pointer-events:none; z-index:1; }
+.corner { position:absolute; width:14px; height:14px; z-index:30; }
+.corner.tl { top:10px; left:10px; border-top:2px solid rgba(255,255,255,0.2); border-left:2px solid rgba(255,255,255,0.2); }
+.corner.tr { top:10px; right:10px; border-top:2px solid rgba(255,255,255,0.2); border-right:2px solid rgba(255,255,255,0.2); }
+.corner.bl { bottom:10px; left:10px; border-bottom:2px solid rgba(255,255,255,0.2); border-left:2px solid rgba(255,255,255,0.2); }
+.corner.br { bottom:10px; right:10px; border-bottom:2px solid rgba(255,255,255,0.2); border-right:2px solid rgba(255,255,255,0.2); }
+
+.s-flash { position:absolute; inset:0; background:#fff; opacity:0; z-index:50; pointer-events:none; }
+.s-flash.go { animation:flash 0.6s ease-out forwards; }
+@keyframes flash { 0%{opacity:0.8} 100%{opacity:0} }
+
+.s-logo { position:absolute; top:18px; left:16px; font-family:'Oswald',sans-serif; font-size:14px; font-weight:700; letter-spacing:3px; color:#fff; z-index:20; display:flex; align-items:center; gap:5px; }
+.s-logo-dot { width:7px; height:7px; background:var(--accent); border-radius:50%; animation:blink 1.4s infinite; flex-shrink:0; }
+.s-live { position:absolute; top:18px; right:16px; background:var(--accent); color:#fff; font-family:'Oswald',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; padding:3px 7px; border-radius:2px; z-index:20; }
+.s-date { position:absolute; top:42px; left:16px; font-size:9px; color:rgba(255,255,255,0.4); letter-spacing:1px; z-index:20; font-family:'Roboto Mono',monospace; }
+
+.s-content { position:absolute; left:0; right:0; top:50%; transform:translateY(-55%); padding:0 16px; z-index:20; }
+.s-breaking-tag { font-family:'Oswald',sans-serif; font-size:10px; font-weight:700; letter-spacing:4px; color:#fff; background:var(--accent); display:inline-block; padding:3px 8px 2px; margin-bottom:8px; }
+.s-divider { width:32px; height:3px; background:var(--accent); margin-bottom:10px; transition:background 0.4s; }
+.s-headline { font-family:'Oswald',sans-serif; font-size:22px; font-weight:700; line-height:1.1; color:#fff; text-transform:uppercase; text-shadow:0 2px 12px rgba(0,0,0,0.8); }
+.s-subtext { font-family:'Barlow Condensed',sans-serif; font-size:13px; color:rgba(255,255,255,0.7); margin-top:8px; line-height:1.4; }
+
+.s-ticker { position:absolute; bottom:52px; left:0; right:0; height:26px; background:var(--accent); overflow:hidden; display:flex; align-items:center; z-index:25; }
+.s-ticker-badge { font-family:'Oswald',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; background:#fff; color:var(--accent); padding:0 8px; height:100%; display:flex; align-items:center; flex-shrink:0; }
+.s-ticker-text { font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:600; color:#fff; white-space:nowrap; padding-left:12px; animation:ticker 14s linear infinite; }
+@keyframes ticker { from{transform:translateX(280px)} to{transform:translateX(-100%)} }
+
+.s-lower { position:absolute; bottom:0; left:0; right:0; padding:8px 14px 12px; background:linear-gradient(0deg,rgba(0,0,0,0.9) 0%,transparent 100%); z-index:20; }
+.s-cat { font-size:9px; font-weight:700; letter-spacing:2px; color:var(--accent); text-transform:uppercase; }
+.s-src { font-size:10px; color:rgba(255,255,255,0.35); font-family:'Roboto Mono',monospace; margin-top:1px; }
+
+.s-content.anim .s-headline { animation:slideUp 0.45s cubic-bezier(0.22,1,0.36,1); }
+.s-content.anim .s-breaking-tag { animation:slideDown 0.35s cubic-bezier(0.22,1,0.36,1); }
+@keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+
+.s-viz { position:absolute; bottom:82px; right:14px; display:flex; align-items:flex-end; gap:2px; height:18px; z-index:22; }
+.vbar { width:2px; background:rgba(255,45,45,0.65); border-radius:1px; animation:vwave 0.5s ease-in-out infinite alternate; }
+.vbar:nth-child(1){height:35%;animation-delay:0s} .vbar:nth-child(2){height:75%;animation-delay:.1s} .vbar:nth-child(3){height:55%;animation-delay:.2s} .vbar:nth-child(4){height:100%;animation-delay:.15s} .vbar:nth-child(5){height:45%;animation-delay:.05s}
+@keyframes vwave { from{transform:scaleY(.3)} to{transform:scaleY(1)} }
+
+.frame-actions { display:flex; gap:8px; }
+.act-btn { padding:8px 18px; border-radius:3px; font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:2px; font-weight:600; cursor:pointer; border:none; transition:all 0.15s; }
+.act-primary { background:var(--accent); color:#fff; }
+.act-primary:hover { background:#ff4444; }
+.act-ghost { background:transparent; color:#777; border:1px solid #222; }
+.act-ghost:hover { color:#aaa; border-color:#444; }
+
+.right-panel { width:250px; min-width:250px; border-left:1px solid var(--border); background:var(--panel); display:flex; flex-direction:column; padding:20px; gap:16px; overflow-y:auto; }
+.theme-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.theme-swatch { height:40px; border-radius:3px; cursor:pointer; border:2px solid transparent; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; letter-spacing:1px; color:rgba(255,255,255,0.5); transition:all 0.15s; }
+.theme-swatch:hover,.theme-swatch.active { border-color:#fff; color:#fff; }
+
+.color-row { display:flex; flex-direction:column; gap:8px; }
+.color-item { display:flex; align-items:center; justify-content:space-between; }
+.color-lbl { font-size:11px; color:var(--muted); }
+input[type="color"] { width:36px; height:24px; border:1px solid #2a2a3a; border-radius:2px; background:#1a1a24; padding:1px; cursor:pointer; }
+input[type="text"] { background:#13131e; border:1px solid #1e1e2e; color:#fff; padding:8px 10px; border-radius:3px; font-family:'Oswald',sans-serif; font-size:14px; letter-spacing:2px; width:100%; outline:none; }
+
+.toggle-row { display:flex; align-items:center; justify-content:space-between; }
+.toggle-lbl { font-size:13px; color:#aaa; }
+.tog { width:38px; height:20px; background:#222; border-radius:10px; position:relative; cursor:pointer; border:1px solid #333; transition:background 0.2s; }
+.tog.on { background:var(--accent); }
+.tog::after { content:''; position:absolute; width:14px; height:14px; background:#fff; border-radius:50%; top:2px; left:2px; transition:left 0.2s; }
+.tog.on::after { left:20px; }
+
+.loading-overlay { display:none; position:fixed; inset:0; background:rgba(8,8,16,0.85); z-index:100; flex-direction:column; align-items:center; justify-content:center; gap:16px; backdrop-filter:blur(4px); }
+.loading-overlay.show { display:flex; }
+.loading-title { font-family:'Oswald',sans-serif; font-size:18px; letter-spacing:4px; color:var(--accent); }
+.loading-sub { font-size:12px; color:var(--muted); letter-spacing:1px; font-family:'Roboto Mono',monospace; }
+.loading-bar-wrap { width:200px; height:2px; background:#1a1a28; border-radius:1px; overflow:hidden; }
+.loading-bar { height:100%; background:var(--accent); animation:loading 1.5s ease-in-out infinite; }
+@keyframes loading { 0%{transform:translateX(-100%);width:60%} 50%{transform:translateX(100%);width:60%} 100%{transform:translateX(200%);width:60%} }
+
+.error-toast { display:none; position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#1a0808; border:1px solid #ff2d2d44; color:#ff8888; padding:10px 20px; border-radius:4px; font-size:13px; z-index:200; font-family:'Roboto Mono',monospace; max-width:80%; text-align:center; }
+.error-toast.show { display:block; animation:fadeIn 0.3s; }
+@keyframes fadeIn { from{opacity:0;transform:translate(-50%,8px)} to{opacity:1;transform:translate(-50%,0)} }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-title">FETCHING LIVE NEWS</div>
+  <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
+  <div class="loading-sub" id="loadingStatus">AI searching web for breaking news...</div>
+</div>
+<div class="error-toast" id="errorToast"></div>
+
+<div class="topbar">
+  <div class="topbar-logo"><span class="live-dot"></span>NEWS <span>SHORTS</span> LIVE</div>
+  <div class="topbar-status" id="statusBar">READY — SELECT NICHE & FETCH</div>
+</div>
+
+<div class="main">
+
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <div>
+        <div class="label">Niche Filter</div>
+        <div class="niche-pills">
+          <div class="pill active" onclick="setNiche('all',this)">ALL</div>
+          <div class="pill" onclick="setNiche('ai',this)">AI</div>
+          <div class="pill" onclick="setNiche('finance',this)">FINANCE</div>
+          <div class="pill" onclick="setNiche('geo',this)">GEOPOLITICS</div>
+        </div>
+      </div>
+      <button class="fetch-btn" id="fetchBtn" onclick="fetchNews()">
+        <span id="fetchIcon">⚡</span> FETCH LIVE NEWS
+      </button>
+    </div>
+    <div class="news-list" id="newsList">
+      <div class="empty-state">
+        <div class="empty-icon">📡</div>
+        <div class="empty-text">Click FETCH to pull<br>live breaking news</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="center">
+    <div class="preview-tag">9:16 · YOUTUBE SHORTS PREVIEW</div>
+    <div class="shorts-frame">
+      <div class="s-bg" id="sBg" style="background:linear-gradient(180deg,#0a0a1a 0%,#050510 60%,#000 100%)"></div>
+      <div class="s-scanlines"></div>
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+      <div class="s-flash" id="sFlash"></div>
+      <div class="s-logo"><div class="s-logo-dot"></div><span id="previewChannel">THE SIGNAL</span></div>
+      <div class="s-live" id="sLive">LIVE</div>
+      <div class="s-date" id="sDate"></div>
+      <div class="s-content" id="sContent">
+        <div class="s-breaking-tag" id="sTag">BREAKING NEWS</div>
+        <div class="s-divider" id="sDivider"></div>
+        <div class="s-headline" id="sHeadline">FETCH LIVE NEWS<br>TO GET STARTED</div>
+        <div class="s-subtext" id="sSub">Your AI-powered news shorts generator</div>
+      </div>
+      <div class="s-viz" id="sViz">
+        <div class="vbar"></div><div class="vbar"></div><div class="vbar"></div><div class="vbar"></div><div class="vbar"></div>
+      </div>
+      <div class="s-ticker" id="sTicker">
+        <div class="s-ticker-badge" id="sTickerBadge">LATEST</div>
+        <div style="overflow:hidden;flex:1;height:100%;display:flex;align-items:center">
+          <div class="s-ticker-text" id="sTickerText">AI • FINANCE • GEOPOLITICS • LIVE UPDATES</div>
+        </div>
+      </div>
+      <div class="s-lower">
+        <div class="s-cat" id="sCat">⚡ THE SIGNAL NEWS</div>
+        <div class="s-src" id="sSrc">theSignal.news</div>
+      </div>
+    </div>
+    <div class="frame-actions">
+  <button class="act-btn act-ghost" onclick="playBreaking()">▶ PREVIEW</button>
+  <button class="act-btn act-primary" onclick="nextStory()">NEXT →</button>
+  <button class="act-btn act-primary" onclick="exportMP4()">⬇ DOWNLOAD MP4</button>
+</div>
+
+  <div class="right-panel">
+    <div>
+      <div class="label" style="margin-bottom:10px">Theme</div>
+      <div class="theme-grid">
+        <div class="theme-swatch active" style="background:linear-gradient(135deg,#0a0a1a,#000)" onclick="applyTheme('dark-red',this)">RED</div>
+        <div class="theme-swatch" style="background:linear-gradient(135deg,#0d0b00,#050400)" onclick="applyTheme('black-gold',this)">GOLD</div>
+        <div class="theme-swatch" style="background:linear-gradient(135deg,#020d1a,#010810)" onclick="applyTheme('navy-cyan',this)">CYAN</div>
+        <div class="theme-swatch" style="background:linear-gradient(135deg,#001a0a,#000d05)" onclick="applyTheme('dark-green',this)">GREEN</div>
+      </div>
+    </div>
+    <div>
+      <div class="label" style="margin-bottom:8px">Custom Colors</div>
+      <div class="color-row">
+        <div class="color-item"><span class="color-lbl">Accent</span><input type="color" id="cAccent" value="#ff2d2d" oninput="applyCustomColor()"></div>
+        <div class="color-item"><span class="color-lbl">BG Top</span><input type="color" id="cBgTop" value="#0a0a1a" oninput="applyCustomColor()"></div>
+        <div class="color-item"><span class="color-lbl">BG Bottom</span><input type="color" id="cBgBot" value="#050510" oninput="applyCustomColor()"></div>
+      </div>
+    </div>
+    <div>
+      <div class="label" style="margin-bottom:8px">Options</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="toggle-row"><span class="toggle-lbl">🔴 Live Badge</span><div class="tog on" id="togLive" onclick="toggleOpt('live')"></div></div>
+        <div class="toggle-row"><span class="toggle-lbl">📰 Ticker</span><div class="tog on" id="togTicker" onclick="toggleOpt('ticker')"></div></div>
+        <div class="toggle-row"><span class="toggle-lbl">🔊 Sound</span><div class="tog on" id="togSound" onclick="toggleOpt('sound')"></div></div>
+        <div class="toggle-row"><span class="toggle-lbl">📡 Visualizer</span><div class="tog on" id="togViz" onclick="toggleOpt('viz')"></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="label" style="margin-bottom:8px">Channel Name</div>
+      <input type="text" id="channelInput" value="THE SIGNAL" oninput="document.getElementById('previewChannel').textContent=this.value.toUpperCase()">
+    </div>
+  </div>
+</div>
+
+<script>
+const THEMES = {
+  'dark-red':   { accent:'#ff2d2d', bgTop:'#0a0a1a', bgBot:'#050510' },
+  'black-gold': { accent:'#f0b429', bgTop:'#0d0b00', bgBot:'#050400' },
+  'navy-cyan':  { accent:'#00d4ff', bgTop:'#020d1a', bgBot:'#010810' },
+  'dark-green': { accent:'#00ff88', bgTop:'#001a0a', bgBot:'#000d05' },
+};
+
+let currentNiche = 'all';
+let stories = [];
+let storyIdx = 0;
+let opts = { live:true, ticker:true, sound:true, viz:true };
+
+document.getElementById('sDate').textContent = new Date().toLocaleDateString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric'}).toUpperCase();
+
+function setNiche(n, el) {
+  currentNiche = n;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+async function fetchNews() {
+
+  const btn = document.getElementById('fetchBtn');
+  btn.disabled = true;
+  document.getElementById('fetchIcon').className = 'spin';
+  document.getElementById('fetchIcon').textContent = '↻';
+  document.getElementById('loadingOverlay').classList.add('show');
+  document.getElementById('statusBar').textContent = 'FETCHING FREE LIVE NEWS...';
+
+  const API_KEY = "d961e98b00a3119a515743e4fb395bd4";
+
+  const nicheQuery = {
+    all: "AI OR finance OR geopolitics",
+    ai: "artificial intelligence technology",
+    finance: "financial markets stocks crypto economy",
+    geo: "geopolitics world affairs diplomacy war"
+  };
+
+const url = `https://corsproxy.io/?https://gnews.io/api/v4/search?q=${encodeURIComponent(nicheQuery[currentNiche])}&lang=en&max=5&apikey=${API_KEY}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.articles || !data.articles.length) {
+      throw new Error("No news returned.");
+    }
+
+    stories = data.articles.map(a => ({
+      category: detectCategory(a.title),
+      headline: formatHeadline(a.title),
+      subtext: a.description || "Latest development unfolding.",
+      ticker: (a.description || a.title).substring(0,140),
+      source: a.source.name,
+      breaking: "BREAKING NEWS"
+    }));
+
+    storyIdx = 0;
+    renderNewsList();
+    loadStory(0);
+
+    document.getElementById('statusBar').textContent =
+      `✓ ${stories.length} FREE STORIES LOADED`;
+
+  } catch(e) {
+    showError("⚠ " + e.message);
+    document.getElementById('statusBar').textContent = 'FETCH FAILED';
+  } finally {
+    document.getElementById('loadingOverlay').classList.remove('show');
+    btn.disabled = false;
+    document.getElementById('fetchIcon').className = '';
+    document.getElementById('fetchIcon').textContent = '⚡';
+  }
+}
+
+function formatHeadline(text){
+  return text.replace(/ - .*$/, "")
+             .toUpperCase()
+             .substring(0,70);
+}
+
+function detectCategory(title){
+  title = title.toLowerCase();
+  if(title.includes("market") || title.includes("stock") || title.includes("crypto"))
+    return "📊 FINANCE & MARKETS";
+  if(title.includes("ai") || title.includes("tech"))
+    return "⚡ AI & TECHNOLOGY";
+  if(title.includes("war") || title.includes("global") || title.includes("diplomacy"))
+    return "🌍 GEOPOLITICS";
+  return "🔴 BREAKING";
+}
+
+function renderNewsList() {
+  const list = document.getElementById('newsList');
+  list.innerHTML = '';
+  stories.forEach((s, i) => {
+    const card = document.createElement('div');
+    card.className = 'news-card' + (i === 0 ? ' selected' : '');
+    card.innerHTML = `<div class="card-category">${s.category}</div><div class="card-headline">${s.headline}</div><div class="card-sub">${s.subtext}</div><div class="card-source">${s.source}</div>`;
+    card.onclick = () => {
+      document.querySelectorAll('.news-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      storyIdx = i;
+      loadStory(i);
+    };
+    list.appendChild(card);
+  });
+}
+
+function loadStory(idx) {
+  if (!stories.length) return;
+  const s = stories[idx];
+  document.getElementById('sTag').textContent = s.breaking || 'BREAKING NEWS';
+  document.getElementById('sHeadline').textContent = s.headline;
+  document.getElementById('sSub').textContent = s.subtext;
+  document.getElementById('sCat').textContent = s.category;
+  document.getElementById('sSrc').textContent = s.source;
+  const t = document.getElementById('sTickerText');
+  t.textContent = s.ticker;
+  t.style.animation = 'none';
+  t.offsetHeight;
+  t.style.animation = 'ticker 14s linear infinite';
+  playBreaking();
+}
+
+function nextStory() {
+  if (!stories.length) return;
+  storyIdx = (storyIdx + 1) % stories.length;
+  document.querySelectorAll('.news-card').forEach((c,i) => c.classList.toggle('selected', i === storyIdx));
+  const cards = document.querySelectorAll('.news-card');
+  if (cards[storyIdx]) cards[storyIdx].scrollIntoView({ behavior:'smooth', block:'nearest' });
+  loadStory(storyIdx);
+}
+
+function playBreaking() {
+  const fl = document.getElementById('sFlash');
+  fl.classList.remove('go'); fl.offsetHeight; fl.classList.add('go');
+  const sc = document.getElementById('sContent');
+  sc.classList.remove('anim'); sc.offsetHeight; sc.classList.add('anim');
+  if (opts.sound) playSound();
+}
+
+function playSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [[660,0],[660,0.15],[880,0.30]].forEach(([freq,delay]) => {
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type='sine'; o.frequency.value=freq;
+      g.gain.setValueAtTime(0, ctx.currentTime+delay);
+      g.gain.linearRampToValueAtTime(0.25, ctx.currentTime+delay+0.02);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime+delay+0.12);
+      o.start(ctx.currentTime+delay); o.stop(ctx.currentTime+delay+0.15);
+    });
+    const o2=ctx.createOscillator(), g2=ctx.createGain();
+    o2.connect(g2); g2.connect(ctx.destination);
+    o2.type='square'; o2.frequency.value=440;
+    g2.gain.setValueAtTime(0, ctx.currentTime+0.55);
+    g2.gain.linearRampToValueAtTime(0.06, ctx.currentTime+0.6);
+    g2.gain.linearRampToValueAtTime(0, ctx.currentTime+1.2);
+    o2.start(ctx.currentTime+0.55); o2.stop(ctx.currentTime+1.2);
+  } catch(e) {}
+}
+
+function applyTheme(name, el) {
+  document.querySelectorAll('.theme-swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  const t = THEMES[name];
+  document.getElementById('cAccent').value = t.accent;
+  document.getElementById('cBgTop').value = t.bgTop;
+  document.getElementById('cBgBot').value = t.bgBot;
+  applyCustomColor();
+}
+
+function applyCustomColor() {
+  const accent = document.getElementById('cAccent').value;
+  const top = document.getElementById('cBgTop').value;
+  const bot = document.getElementById('cBgBot').value;
+  document.getElementById('sBg').style.background = `linear-gradient(180deg,${top} 0%,${bot} 60%,#000 100%)`;
+  document.documentElement.style.setProperty('--accent', accent);
+}
+
+function toggleOpt(key) {
+  opts[key] = !opts[key];
+  const map = { live:'togLive', ticker:'togTicker', sound:'togSound', viz:'togViz' };
+  document.getElementById(map[key]).classList.toggle('on', opts[key]);
+  if (key==='live') document.getElementById('sLive').style.display = opts.live ? 'block':'none';
+  if (key==='ticker') document.getElementById('sTicker').style.display = opts.ticker ? 'flex':'none';
+  if (key==='viz') document.getElementById('sViz').style.display = opts.viz ? 'flex':'none';
+}
+
+function showError(msg) {
+  const t = document.getElementById('errorToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 6000);
+}
+async function exportMP4(){
+
+  document.getElementById('statusBar').textContent = "RENDERING VIDEO...";
+
+  const frame = document.querySelector('.shorts-frame');
+
+  // Capture ONE snapshot
+  const snap = await html2canvas(frame, { scale: 2 });
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = snap.width;
+  canvas.height = snap.height;
+
+  const stream = canvas.captureStream(30);
+
+  const recorder = new MediaRecorder(stream, {
+    mimeType: "video/webm"
+  });
+
+  let chunks = [];
+  recorder.ondataavailable = e => chunks.push(e.data);
+
+  recorder.onstop = () => {
+    const blob = new Blob(chunks, { type: "video/webm" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "news-short.webm";
+    a.click();
+
+    URL.revokeObjectURL(url);
+    document.getElementById('statusBar').textContent = "VIDEO DOWNLOADED";
+  };
+
+  recorder.start();
+
+  const duration = 6000;
+  const fps = 30;
+  const interval = 1000 / fps;
+  let elapsed = 0;
+
+  const drawInterval = setInterval(() => {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(snap, 0, 0);
+    elapsed += interval;
+
+    if (elapsed >= duration) {
+      clearInterval(drawInterval);
+      recorder.stop();
+    }
+  }, interval);
+}</script>
+</body>
+</html>
