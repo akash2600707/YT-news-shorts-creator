@@ -1,0 +1,2223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIGNAL STUDIO — Enterprise Broadcast Platform</title>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN SYSTEM — SIGNAL STUDIO ENTERPRISE
+   Carbon black · Steel · Electric red
+═══════════════════════════════════════════════ */
+:root {
+  --c0: #060608;        /* deepest bg */
+  --c1: #0a0a0e;        /* panel bg */
+  --c2: #0f0f15;        /* elevated */
+  --c3: #141420;        /* card bg */
+  --c4: #1a1a28;        /* hover state */
+  --c5: #20203a;        /* border highlight */
+  --border: #ffffff08;
+  --border2: #ffffff12;
+  --border3: #ffffff1f;
+  --red: #e81c3c;
+  --red2: #ff1744;
+  --red-dim: #3d0a14;
+  --amber: #ffab40;
+  --cyan: #18d4f5;
+  --cyan-dim: #051820;
+  --green: #00e676;
+  --green-dim: #001a0a;
+  --purple: #9c5cf5;
+  --text: #d0d0e8;
+  --text2: #888898;
+  --text3: #44445a;
+  --mono: 'IBM Plex Mono', monospace;
+  --display: 'Chakra Petch', sans-serif;
+  --head: 'Rajdhani', sans-serif;
+  --accent: var(--red);
+  --shadow: 0 8px 32px rgba(0,0,0,.6);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; }
+
+body {
+  background: var(--c0);
+  color: var(--text);
+  font-family: var(--head);
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #202030; border-radius:2px; }
+::-webkit-scrollbar-thumb:hover { background: #303050; }
+
+/* ══════════════════════════════════════
+   GLOBAL SYSTEM BAR
+══════════════════════════════════════ */
+.sysbar {
+  height: 42px; min-height: 42px;
+  background: var(--c1);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 0 0 16px;
+  gap: 0;
+  z-index: 1000;
+  position: relative;
+}
+
+.sysbar-logo {
+  display: flex; align-items: center; gap: 9px;
+  padding-right: 20px;
+  border-right: 1px solid var(--border2);
+  flex-shrink: 0;
+}
+.logo-mark {
+  width: 26px; height: 26px;
+  background: var(--red);
+  display: flex; align-items: center; justify-content: center;
+  clip-path: polygon(0 0, 100% 0, 100% 70%, 70% 100%, 0 100%);
+}
+.logo-mark span {
+  font-family: var(--display);
+  font-size: 12px; font-weight: 700;
+  color: #fff; letter-spacing: 0;
+  margin-top: -2px;
+}
+.logo-text {
+  font-family: var(--display);
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 4px; color: #fff;
+  text-transform: uppercase;
+}
+.logo-text em { color: var(--red); font-style:normal; }
+.logo-version {
+  font-family: var(--mono);
+  font-size: 9px; color: var(--text3);
+  letter-spacing: 1px;
+  align-self: flex-end; margin-bottom: 3px;
+}
+
+/* NAV ITEMS */
+.sysbar-nav {
+  display: flex; align-items: center; height: 100%;
+  margin-left: 4px;
+}
+.snav-item {
+  display: flex; align-items: center; gap: 6px;
+  height: 100%; padding: 0 16px;
+  font-family: var(--display);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text3); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .15s; user-select: none;
+  border-top: none; border-left: none; border-right: none;
+  background: none;
+}
+.snav-item:hover { color: var(--text2); background: var(--border); }
+.snav-item.active { color: var(--red); border-bottom-color: var(--red); }
+.snav-item .nav-icon { font-size: 13px; opacity: .7; }
+
+/* SYSBAR RIGHT */
+.sysbar-right {
+  margin-left: auto;
+  display: flex; align-items: center;
+  height: 100%; gap: 0;
+}
+
+.sys-metric {
+  display: flex; flex-direction: column;
+  padding: 0 14px; border-left: 1px solid var(--border);
+  height: 100%; justify-content: center; gap: 1px;
+}
+.sys-metric-label { font-family: var(--mono); font-size: 8px; color: var(--text3); letter-spacing: 1.5px; text-transform: uppercase; }
+.sys-metric-val { font-family: var(--mono); font-size: 12px; color: var(--text2); font-weight: 500; }
+.sys-metric-val.live { color: var(--cyan); }
+.sys-metric-val.rec { color: var(--red); animation: blink 1s infinite; }
+.sys-metric-val.ok { color: var(--green); }
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.sys-clock {
+  padding: 0 16px; border-left: 1px solid var(--border);
+  height: 100%; display: flex; align-items: center;
+}
+.clock-display {
+  font-family: var(--mono);
+  font-size: 15px; font-weight: 500;
+  color: var(--text2); letter-spacing: 2px;
+}
+
+.yt-connect-btn {
+  height: 100%;
+  padding: 0 18px;
+  background: #1a0808;
+  border-left: 1px solid var(--border);
+  border-top: none; border-right: none; border-bottom: none;
+  color: #cc3333;
+  font-family: var(--display);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.yt-connect-btn:hover { background: #250a0a; color: var(--red2); }
+.yt-connect-btn.connected { background: var(--green-dim); color: var(--green); border-left-color: var(--green-dim); }
+
+/* ══════════════════════════════════════
+   WORKSPACE
+══════════════════════════════════════ */
+.workspace {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* VIEW PAGES */
+.view { display: none; flex: 1; overflow: hidden; }
+.view.active { display: flex; }
+
+/* ══════════════════════════════════════
+   NEWSROOM VIEW
+══════════════════════════════════════ */
+#view-newsroom {
+  flex-direction: column;
+}
+
+.newsroom-toolbar {
+  height: 50px; min-height: 50px;
+  background: var(--c1);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 20px; gap: 12px;
+}
+
+.toolbar-label {
+  font-family: var(--mono);
+  font-size: 9px; color: var(--text3);
+  letter-spacing: 2px; text-transform: uppercase;
+  padding-right: 12px; border-right: 1px solid var(--border2);
+  flex-shrink: 0;
+}
+
+.niche-filters { display: flex; gap: 6px; }
+.nf-btn {
+  padding: 5px 12px;
+  background: var(--c3);
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  font-family: var(--display);
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text3); cursor: pointer;
+  transition: all .15s;
+}
+.nf-btn:hover { border-color: var(--border3); color: var(--text2); }
+.nf-btn.on { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+
+.toolbar-spacer { flex: 1; }
+
+.fetch-main-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 20px;
+  background: var(--red);
+  border: none; border-radius: 2px;
+  font-family: var(--display);
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: #fff; cursor: pointer;
+  transition: background .15s;
+}
+.fetch-main-btn:hover { background: var(--red2); }
+.fetch-main-btn:disabled { background: var(--red-dim); color: #553; cursor: not-allowed; }
+
+/* NEWSROOM GRID */
+.newsroom-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 280px;
+  overflow: hidden;
+}
+
+.nr-col {
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.nr-col:last-child { border-right: none; }
+
+.nr-col-header {
+  height: 36px; min-height: 36px;
+  background: var(--c2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 14px; gap: 8px;
+}
+.nr-col-title {
+  font-family: var(--mono);
+  font-size: 9px; color: var(--text3);
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.nr-col-count {
+  font-family: var(--mono);
+  font-size: 10px; color: var(--text3);
+  background: var(--c4); padding: 1px 7px;
+  border-radius: 10px;
+}
+.nr-col-count.has { color: var(--red); }
+
+.nr-col-body { flex: 1; overflow-y: auto; padding: 10px; }
+
+/* STORY CARDS */
+.story-tile {
+  background: var(--c2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+}
+.story-tile:hover { background: var(--c3); border-color: var(--border2); }
+.story-tile.selected { background: #140610; border-color: #4a1040; }
+.story-tile.queued { border-left: 3px solid var(--amber); }
+.story-tile.ready { border-left: 3px solid var(--green); }
+.story-tile.publishing { border-left: 3px solid var(--cyan); }
+
+.st-tag {
+  font-family: var(--mono);
+  font-size: 8px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.st-tag.ai { color: var(--red); }
+.st-tag.fin { color: var(--amber); }
+.st-tag.geo { color: var(--cyan); }
+.st-tag.brk { color: #ff6b6b; }
+
+.st-headline {
+  font-family: var(--display);
+  font-size: 13px; font-weight: 700;
+  line-height: 1.3; color: var(--text);
+  text-transform: uppercase; letter-spacing: .3px;
+  margin-bottom: 5px;
+}
+.st-sub { font-size: 11px; color: var(--text3); line-height: 1.4; }
+.st-meta {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 8px; padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.st-source { font-family: var(--mono); font-size: 9px; color: var(--text3); flex: 1; }
+.st-actions { display: flex; gap: 4px; }
+.st-btn {
+  padding: 3px 8px;
+  background: var(--c4); border: 1px solid var(--border2);
+  border-radius: 2px;
+  font-family: var(--mono); font-size: 9px;
+  color: var(--text3); cursor: pointer;
+  transition: all .12s;
+}
+.st-btn:hover { color: var(--text2); border-color: var(--border3); }
+.st-btn.green { color: var(--green); border-color: var(--green-dim); }
+.st-btn.green:hover { background: var(--green-dim); }
+
+/* QUEUE PANEL (4th col) */
+.queue-item {
+  background: var(--c2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px;
+  margin-bottom: 6px;
+}
+.qi-title { font-family: var(--display); font-size: 11px; font-weight: 600; color: var(--text2); margin-bottom: 4px; line-height: 1.3; text-transform: uppercase; }
+.qi-status { font-family: var(--mono); font-size: 9px; letter-spacing: 1px; }
+.qi-status.queued { color: var(--amber); }
+.qi-status.ready { color: var(--green); }
+.qi-status.publishing { color: var(--cyan); }
+.qi-status.done { color: var(--text3); }
+.qi-prog { height: 3px; background: var(--c4); border-radius: 1px; margin-top: 6px; overflow: hidden; display: none; }
+.qi-prog.show { display: block; }
+.qi-prog-bar { height: 100%; background: var(--cyan); width: 0%; transition: width .3s; border-radius: 1px; }
+
+/* EMPTY STATE */
+.nr-empty {
+  padding: 32px 16px; text-align: center;
+}
+.nr-empty-icon { font-size: 24px; margin-bottom: 8px; opacity: .4; }
+.nr-empty p { font-size: 11px; color: var(--text3); line-height: 1.7; }
+
+/* ══════════════════════════════════════
+   STUDIO VIEW
+══════════════════════════════════════ */
+#view-studio {
+  display: none;
+}
+#view-studio.active {
+  display: flex;
+}
+
+/* LEFT INSPECTOR */
+.studio-left {
+  width: 260px; min-width: 260px;
+  background: var(--c1);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+/* STORY PICKER */
+.story-picker {
+  flex: 1; overflow-y: auto;
+  padding: 8px;
+}
+.sp-item {
+  padding: 9px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all .12s;
+  border-left: 2px solid transparent;
+  margin-bottom: 2px;
+}
+.sp-item:hover { background: var(--c3); }
+.sp-item.sel { background: #140610; border-left-color: var(--red); }
+.sp-item-tag { font-family: var(--mono); font-size: 8px; color: var(--text3); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 2px; }
+.sp-item-hl { font-family: var(--display); font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; line-height: 1.3; }
+
+.studio-left-footer {
+  padding: 10px;
+  border-top: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+/* CENTER STAGE */
+.studio-center {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px;
+  gap: 14px;
+  background: radial-gradient(ellipse at 50% 40%, #0c0c1e 0%, var(--c0) 65%);
+  overflow: hidden;
+  position: relative;
+}
+
+/* GRID LINES BACKGROUND */
+.studio-center::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse at 50% 50%, black 30%, transparent 75%);
+}
+
+.stage-label {
+  font-family: var(--mono);
+  font-size: 8px; letter-spacing: 4px;
+  color: #1a1a30; text-transform: uppercase;
+  z-index: 1;
+}
+
+/* THE 9:16 FRAME */
+.shorts-frame {
+  width: 252px; height: 448px;
+  position: relative; overflow: hidden;
+  border-radius: 10px; flex-shrink: 0;
+  z-index: 1;
+  box-shadow:
+    0 0 0 1px #12121e,
+    0 0 0 2px #0a0a16,
+    0 24px 80px rgba(0,0,0,.8),
+    0 0 120px rgba(232,28,60,.05);
+}
+
+/* FRAME LAYERS */
+.sf-bg { position:absolute; inset:0; background: linear-gradient(160deg, #0c0c20 0%, #060618 50%, #000 100%); transition:background .4s; }
+.sf-scanlines { position:absolute; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.055) 2px,rgba(0,0,0,.055) 4px); pointer-events:none; z-index:2; }
+.sf-noise { position:absolute; inset:0; opacity:.025; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); pointer-events:none; z-index:3; }
+.sf-vignette { position:absolute; inset:0; background:radial-gradient(ellipse at 50% 50%,transparent 35%,rgba(0,0,0,.55) 100%); pointer-events:none; z-index:4; }
+.sf-flash { position:absolute; inset:0; background:#fff; opacity:0; z-index:80; pointer-events:none; }
+@keyframes flashGo { 0%{opacity:.9} 100%{opacity:0} }
+
+/* BROADCAST UI ELEMENTS */
+.sf-topbar {
+  position:absolute; top:10px; left:10px; right:10px;
+  display:flex; align-items:center; justify-content:space-between;
+  z-index:10;
+}
+.sf-logo-area { display:flex; align-items:center; gap:5px; }
+.sf-logo-mark { width:5px; height:14px; background:var(--accent); border-radius:1px; animation:blink 1.4s infinite; }
+.sf-logo-name { font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:3px; color:#fff; }
+.sf-live-badge {
+  font-family:'Bebas Neue',sans-serif; font-size:9px; letter-spacing:2px;
+  background:var(--accent); color:#fff; padding:2px 7px 3px; border-radius:1px;
+}
+.sf-dateline { position:absolute; top:28px; left:10px; font-family:var(--mono); font-size:7px; color:#33334a; letter-spacing:.5px; z-index:10; }
+
+/* CONTENT BLOCK */
+.sf-content {
+  position:absolute; left:0; right:0;
+  top:50%; transform:translateY(-52%);
+  padding:0 12px; z-index:20;
+}
+.sf-breaking-chip {
+  display:inline-flex; align-items:center; gap:5px;
+  background:var(--accent); padding:2px 9px 3px;
+  margin-bottom:8px;
+  font-family:'Bebas Neue',sans-serif; font-size:10px; letter-spacing:4px; color:#fff;
+}
+.sf-breaking-pip { width:5px; height:5px; background:#fff; border-radius:50%; opacity:.7; animation:blink .9s infinite; }
+.sf-accent-rule { width:28px; height:3px; background:var(--accent); margin-bottom:9px; }
+.sf-headline-text {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:26px; line-height:1.04;
+  color:#fff; letter-spacing:.3px;
+  text-shadow:0 3px 20px rgba(0,0,0,.95);
+  word-break:break-word;
+}
+.sf-subtext { font-family:'Rajdhani',sans-serif; font-size:12px; font-weight:400; color:#9999b8; margin-top:7px; line-height:1.4; }
+
+/* VIZ BARS */
+.sf-viz {
+  position:absolute; bottom:76px; right:10px;
+  display:flex; align-items:flex-end; gap:2px; height:16px; z-index:15;
+}
+.sf-bar { width:3px; border-radius:1px; background:rgba(232,28,60,.55); animation:barAnim .75s ease-in-out infinite alternate; }
+.sf-bar:nth-child(1){height:30%;animation-delay:0s} .sf-bar:nth-child(2){height:80%;animation-delay:.1s}
+.sf-bar:nth-child(3){height:55%;animation-delay:.2s} .sf-bar:nth-child(4){height:100%;animation-delay:.15s} .sf-bar:nth-child(5){height:45%;animation-delay:.05s}
+@keyframes barAnim { from{transform:scaleY(.2)} to{transform:scaleY(1)} }
+
+/* TICKER */
+.sf-ticker {
+  position:absolute; bottom:40px; left:0; right:0;
+  height:22px; display:flex; align-items:center;
+  overflow:hidden; z-index:20;
+}
+.sf-ticker-tag {
+  font-family:'Bebas Neue',sans-serif; font-size:9px; letter-spacing:2px;
+  background:#fff; color:var(--accent);
+  height:100%; padding:0 8px; display:flex; align-items:center; flex-shrink:0;
+}
+.sf-ticker-bg { position:absolute; inset:0; background:rgba(232,28,60,.88); z-index:-1; }
+.sf-ticker-scroll { overflow:hidden; flex:1; height:100%; display:flex; align-items:center; padding-left:10px; }
+.sf-ticker-text { font-family:'Rajdhani',sans-serif; font-size:11px; font-weight:600; color:#fff; white-space:nowrap; animation:tickScroll 18s linear infinite; }
+@keyframes tickScroll { from{transform:translateX(280px)} to{transform:translateX(-100%)} }
+
+/* LOWER THIRD */
+.sf-lower { position:absolute; bottom:0; left:0; right:0; padding:7px 10px; background:linear-gradient(0deg,rgba(0,0,0,.97) 0%,transparent 100%); z-index:20; }
+.sf-cat { font-family:var(--mono); font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); }
+.sf-src { font-size:10px; color:#2a2a40; margin-top:1px; font-family:var(--mono); }
+
+/* FRAME ANIMATIONS */
+.frame-playing .sf-headline-text { animation: hIn .5s cubic-bezier(.22,1,.36,1) both; }
+.frame-playing .sf-breaking-chip { animation: bIn .4s cubic-bezier(.22,1,.36,1) both; }
+@keyframes hIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+@keyframes bIn { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:translateY(0)} }
+
+/* STAGE CONTROLS */
+.stage-controls {
+  display: flex; align-items: center; gap: 8px; z-index: 1;
+}
+.sc-btn {
+  padding: 7px 14px;
+  border-radius: 2px; border: none;
+  font-family: var(--display);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: all .12s;
+}
+.sc-primary { background: var(--accent); color: #fff; }
+.sc-primary:hover { background: var(--red2); }
+.sc-ghost { background: transparent; color: var(--text3); border: 1px solid var(--border2); }
+.sc-ghost:hover { color: var(--text2); border-color: var(--border3); }
+.sc-export { background: var(--cyan-dim); color: var(--cyan); border: 1px solid #0a2a38; }
+.sc-export:hover { background: #072030; }
+
+/* PROGRESS */
+.stage-prog { width: 260px; height: 4px; background: var(--c4); border-radius: 2px; overflow: hidden; display:none; z-index:1; }
+.stage-prog.show { display: block; }
+.stage-prog-bar { height:100%; width:0%; background:var(--red); border-radius:2px; transition:width .3s; }
+
+.stage-status { font-family:var(--mono); font-size:9px; color:var(--text3); z-index:1; min-height:12px; }
+.stage-status.rec { color: var(--red); }
+.stage-status.ok { color: var(--green); }
+
+/* RIGHT INSPECTOR TABS */
+.studio-right {
+  width: 280px; min-width: 280px;
+  background: var(--c1);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+.inspector-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--c0);
+}
+.itab {
+  flex: 1; padding: 10px 4px;
+  font-family: var(--mono); font-size: 8px;
+  font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; text-align: center;
+  cursor: pointer; color: var(--text3);
+  background: none; border: none;
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+}
+.itab:hover { color: var(--text2); }
+.itab.on { color: var(--accent); border-bottom-color: var(--accent); }
+
+.inspector-body {
+  flex: 1; overflow-y: auto;
+}
+
+.ipanel { display:none; padding:16px; flex-direction:column; gap:14px; }
+.ipanel.on { display:flex; }
+
+/* FORM CONTROLS */
+.fg { display:flex; flex-direction:column; gap:5px; }
+.flbl { font-family:var(--mono); font-size:8px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:var(--text3); }
+
+input[type=text], input[type=number], input[type=password], select, textarea {
+  background: var(--c3); border: 1px solid var(--border2);
+  color: var(--text); padding: 8px 10px; border-radius: 2px;
+  font-family: var(--head); font-size: 13px; width: 100%; outline: none;
+  transition: border-color .15s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--red); }
+textarea { height:58px; resize:vertical; font-size:12px; line-height:1.5; }
+select option { background: var(--c3); }
+
+.segctl { display:flex; background:var(--c3); border:1px solid var(--border2); border-radius:2px; overflow:hidden; }
+.seg { flex:1; padding:7px 4px; text-align:center; font-family:var(--display); font-size:11px; font-weight:600; letter-spacing:.5px; color:var(--text3); cursor:pointer; transition:all .15s; background:none; border:none; }
+.seg:hover:not(.on) { color:var(--text2); background:var(--c4); }
+.seg.on { background:var(--red); color:#fff; }
+.seg.on-amber { background:var(--amber); color:#000; }
+.seg.on-cyan { background:var(--cyan); color:#000; }
+
+.quality-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; }
+.qcard { padding:9px 5px; background:var(--c3); border:1px solid var(--border2); border-radius:2px; text-align:center; cursor:pointer; transition:all .12s; }
+.qcard:hover { border-color:var(--border3); }
+.qcard.on { background:var(--red-dim); border-color:var(--red); }
+.qcard-val { font-family:var(--display); font-size:14px; font-weight:700; color:var(--text2); }
+.qcard.on .qcard-val { color:#fff; }
+.qcard-sub { font-family:var(--mono); font-size:8px; color:var(--text3); letter-spacing:1px; margin-top:1px; }
+
+.slrow { display:flex; align-items:center; gap:8px; }
+.slval { font-family:var(--mono); font-size:11px; color:var(--accent); min-width:44px; text-align:right; }
+
+input[type=range] { -webkit-appearance:none; width:100%; height:3px; background:var(--c5); border-radius:2px; outline:none; border:none; padding:0; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:12px; height:12px; background:var(--accent); border-radius:50%; cursor:pointer; }
+
+.tog-row2 { display:flex; align-items:center; justify-content:space-between; }
+.tog-lbl { font-size:12px; color:var(--text2); }
+.toggle2 { width:36px; height:20px; background:var(--c4); border-radius:10px; position:relative; cursor:pointer; border:1px solid var(--border2); transition:background .15s; flex-shrink:0; }
+.toggle2.on { background:var(--accent); border-color:var(--accent); }
+.toggle2::after { content:''; position:absolute; width:14px; height:14px; background:#fff; border-radius:50%; top:2px; left:2px; transition:left .15s; }
+.toggle2.on::after { left:18px; }
+
+/* COLOR PICKER GRID */
+.cgrid { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.cfield { display:flex; flex-direction:column; gap:3px; }
+.cfield label { font-family:var(--mono); font-size:8px; color:var(--text3); letter-spacing:1px; text-transform:uppercase; }
+input[type=color] { width:100%; height:30px; border:1px solid var(--border2); border-radius:2px; padding:2px; background:var(--c3); cursor:pointer; }
+
+/* THEMES */
+.theme-row { display:grid; grid-template-columns:repeat(5,1fr); gap:5px; }
+.tsw { height:28px; border-radius:2px; border:2px solid transparent; cursor:pointer; transition:all .15s; }
+.tsw.on { border-color:#fff; }
+.tsw:hover:not(.on) { transform:scale(1.08); }
+
+/* MUSIC GRID */
+.mgrid { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+.mcard { padding:9px 7px; background:var(--c3); border:1px solid var(--border2); border-radius:2px; text-align:center; cursor:pointer; transition:all .12s; }
+.mcard:hover { border-color:var(--border3); }
+.mcard.on { background:var(--green-dim); border-color:var(--green); }
+.mcard-icon { font-size:16px; margin-bottom:3px; }
+.mcard-label { font-family:var(--mono); font-size:9px; color:var(--text3); letter-spacing:1px; text-transform:uppercase; }
+.mcard.on .mcard-label { color:var(--green); }
+
+/* SECTION HEADER */
+.sec-head { display:flex; align-items:center; gap:8px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+.sec-title { font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--text3); }
+.sec-pill { font-family:var(--mono); font-size:8px; padding:1px 7px; border-radius:10px; }
+.sec-pill.red { background:var(--red-dim); color:var(--red); }
+.sec-pill.green { background:var(--green-dim); color:var(--green); }
+
+/* BTN SYSTEM */
+.btn-full { width:100%; padding:10px; border-radius:2px; border:none; font-family:var(--display); font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all .15s; }
+.btn-red { background:var(--accent); color:#fff; }
+.btn-red:hover { background:var(--red2); }
+.btn-cyan { background:var(--cyan-dim); color:var(--cyan); border:1px solid #082030; }
+.btn-cyan:hover { background:#082030; }
+.btn-ghost { background:transparent; color:var(--text3); border:1px solid var(--border2); }
+.btn-ghost:hover { color:var(--text2); border-color:var(--border3); }
+.btn-green { background:var(--green-dim); color:var(--green); border:1px solid #081a08; }
+.btn-green:hover { background:#082008; }
+.btn-disabled { opacity:.35; cursor:not-allowed; pointer-events:none; }
+
+.divline { height:1px; background:var(--border); }
+
+/* ══════════════════════════════════════
+   ANALYTICS VIEW
+══════════════════════════════════════ */
+#view-analytics {
+  flex-direction: column;
+  padding: 24px;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.analytics-header {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.analytics-title {
+  font-family: var(--display); font-size: 24px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+}
+.analytics-sub { font-family:var(--mono); font-size:10px; color:var(--text3); letter-spacing:1px; margin-top:3px; }
+
+.kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.kpi-card {
+  background:var(--c2); border:1px solid var(--border);
+  border-radius:3px; padding:18px 16px;
+  position:relative; overflow:hidden;
+}
+.kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--accent); }
+.kpi-card.amber::before { background:var(--amber); }
+.kpi-card.cyan::before { background:var(--cyan); }
+.kpi-card.green::before { background:var(--green); }
+.kpi-label { font-family:var(--mono); font-size:9px; color:var(--text3); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+.kpi-val { font-family:var(--display); font-size:32px; font-weight:700; color:var(--text); line-height:1; }
+.kpi-delta { font-family:var(--mono); font-size:10px; margin-top:4px; }
+.kpi-delta.up { color:var(--green); }
+.kpi-delta.down { color:var(--red); }
+
+.chart-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.chart-card {
+  background:var(--c2); border:1px solid var(--border);
+  border-radius:3px; padding:16px;
+}
+.chart-card-title { font-family:var(--mono); font-size:9px; color:var(--text3); letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; }
+.mini-bars { display:flex; align-items:flex-end; gap:4px; height:80px; }
+.mbar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
+.mbar { width:100%; border-radius:2px 2px 0 0; transition:height .3s; }
+.mbar-label { font-family:var(--mono); font-size:8px; color:var(--text3); }
+
+.history-table { width:100%; border-collapse:collapse; }
+.history-table th { font-family:var(--mono); font-size:8px; color:var(--text3); letter-spacing:1.5px; text-transform:uppercase; text-align:left; padding:6px 8px; border-bottom:1px solid var(--border2); }
+.history-table td { font-size:12px; color:var(--text2); padding:8px; border-bottom:1px solid var(--border); }
+.history-table td:first-child { font-family:var(--display); font-size:11px; font-weight:600; color:var(--text); text-transform:uppercase; }
+.badge { display:inline-block; padding:2px 7px; border-radius:10px; font-family:var(--mono); font-size:8px; letter-spacing:1px; }
+.badge.pub { background:var(--green-dim); color:var(--green); }
+.badge.queue { background:#1a1200; color:var(--amber); }
+
+/* ══════════════════════════════════════
+   SETTINGS VIEW
+══════════════════════════════════════ */
+#view-settings {
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.settings-nav {
+  width: 200px; min-width: 200px;
+  background: var(--c1);
+  border-right: 1px solid var(--border);
+  padding: 16px 0;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.snav-sec { font-family:var(--mono); font-size:8px; color:var(--text3); letter-spacing:2px; text-transform:uppercase; padding:4px 16px 8px; margin-top:8px; }
+.snav-link { padding:9px 16px; font-family:var(--head); font-size:13px; font-weight:500; color:var(--text3); cursor:pointer; transition:all .12s; display:flex; align-items:center; gap:8px; border-left:2px solid transparent; }
+.snav-link:hover { background:var(--c3); color:var(--text2); }
+.snav-link.on { background:#140610; color:var(--text); border-left-color:var(--red); }
+
+.settings-body { flex:1; overflow-y:auto; padding:28px 32px; }
+.settings-section { display:none; flex-direction:column; gap:20px; }
+.settings-section.on { display:flex; }
+.settings-title { font-family:var(--display); font-size:20px; font-weight:700; letter-spacing:3px; text-transform:uppercase; padding-bottom:14px; border-bottom:1px solid var(--border); }
+.settings-row { background:var(--c2); border:1px solid var(--border); border-radius:3px; padding:16px; display:flex; flex-direction:column; gap:12px; }
+.settings-row-title { font-family:var(--display); font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--text2); }
+.settings-row-sub { font-size:12px; color:var(--text3); line-height:1.6; }
+.info-callout { background:var(--cyan-dim); border-left:3px solid var(--cyan); border-radius:0 2px 2px 0; padding:12px 14px; font-size:12px; color:var(--text3); line-height:1.7; }
+.info-callout a { color:var(--cyan); text-decoration:none; }
+.info-callout strong { color:var(--text2); }
+
+/* ══════════════════════════════════════
+   MODAL
+══════════════════════════════════════ */
+.modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.88); z-index:2000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s; }
+.modal-bg.show { opacity:1; pointer-events:all; }
+.modal-box { background:var(--c2); border:1px solid var(--border2); border-radius:4px; padding:28px; width:420px; display:flex; flex-direction:column; gap:16px; box-shadow:var(--shadow); }
+.modal-title { font-family:var(--display); font-size:20px; font-weight:700; letter-spacing:3px; text-transform:uppercase; }
+.modal-body { font-size:13px; color:var(--text3); line-height:1.7; }
+.modal-actions { display:flex; gap:10px; }
+.mbtn { padding:9px 18px; border-radius:2px; border:none; font-family:var(--head); font-size:13px; font-weight:700; cursor:pointer; transition:all .12s; }
+.mbtn-red { background:#ff0000; color:#fff; }
+.mbtn-red:hover { background:#cc0000; }
+.mbtn-ghost { background:var(--c4); color:var(--text2); }
+
+/* TOAST SYSTEM */
+.toasts { position:fixed; bottom:20px; right:20px; z-index:3000; display:flex; flex-direction:column; gap:8px; }
+.toast-item {
+  background:var(--c2); border:1px solid var(--border2);
+  border-radius:3px; padding:11px 16px;
+  font-family:var(--mono); font-size:11px; color:var(--text);
+  box-shadow:var(--shadow); transform:translateX(120%);
+  transition:transform .25s cubic-bezier(.22,1,.36,1);
+  max-width:320px; line-height:1.5;
+}
+.toast-item.show { transform:translateX(0); }
+.toast-item.t-ok { border-left:3px solid var(--green); }
+.toast-item.t-err { border-left:3px solid var(--amber); }
+.toast-item.t-info { border-left:3px solid var(--cyan); }
+
+/* KEYBOARD SHORTCUT HINT */
+.kbd { display:inline-block; padding:1px 5px; background:var(--c4); border:1px solid var(--border2); border-radius:2px; font-family:var(--mono); font-size:9px; color:var(--text3); }
+
+/* SPINNERS */
+@keyframes spin { to{transform:rotate(360deg)} }
+.spin { animation:spin .8s linear infinite; display:inline-block; }
+
+/* BOTTOM STATUS BAR */
+.statusbar {
+  height: 24px; min-height: 24px;
+  background: var(--c0);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 14px; gap: 16px;
+}
+.sb-item { font-family:var(--mono); font-size:9px; color:var(--text3); letter-spacing:1px; display:flex; align-items:center; gap:5px; }
+.sb-dot { width:5px; height:5px; border-radius:50%; }
+.sb-dot.red { background:var(--red); animation:blink 1.4s infinite; }
+.sb-dot.green { background:var(--green); }
+.sb-dot.grey { background:var(--text3); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ SYSTEM BAR ═══════════════════════ -->
+<div class="sysbar">
+  <div class="sysbar-logo">
+    <div class="logo-mark"><span>S</span></div>
+    <div class="logo-text">SIGNAL <em>STUDIO</em></div>
+    <div class="logo-version">v2.0 ENT</div>
+  </div>
+
+  <nav class="sysbar-nav">
+    <button class="snav-item active" onclick="gotoView('newsroom',this)"><span class="nav-icon">📡</span>NEWSROOM</button>
+    <button class="snav-item" onclick="gotoView('studio',this)"><span class="nav-icon">🎬</span>STUDIO</button>
+    <button class="snav-item" onclick="gotoView('analytics',this)"><span class="nav-icon">📊</span>ANALYTICS</button>
+    <button class="snav-item" onclick="gotoView('settings',this)"><span class="nav-icon">⚙</span>SETTINGS</button>
+  </nav>
+
+  <div class="sysbar-right">
+    <div class="sys-metric">
+      <div class="sys-metric-label">Stories</div>
+      <div class="sys-metric-val" id="metStories">0</div>
+    </div>
+    <div class="sys-metric">
+      <div class="sys-metric-label">Queue</div>
+      <div class="sys-metric-val" id="metQueue">0</div>
+    </div>
+    <div class="sys-metric">
+      <div class="sys-metric-label">Published</div>
+      <div class="sys-metric-val ok" id="metPublished">0</div>
+    </div>
+    <div class="sys-metric">
+      <div class="sys-metric-label">Automation</div>
+      <div class="sys-metric-val" id="metAuto">OFF</div>
+    </div>
+    <div class="sys-clock"><div class="clock-display" id="sysClockDisplay">00:00:00</div></div>
+    <button class="yt-connect-btn" id="ytConnectBtn" onclick="openYTModal()">
+      <span>▶</span> CONNECT YT
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════ WORKSPACE ═══════════════════════ -->
+<div class="workspace">
+
+<!-- ══════ NEWSROOM VIEW ══════ -->
+<div class="view active" id="view-newsroom">
+  <div class="newsroom-toolbar">
+    <div class="toolbar-label">TOPICS</div>
+    <div class="niche-filters">
+      <div class="nf-btn on" data-n="ai" onclick="toggleNiche(this)">⚡ AI/TECH</div>
+      <div class="nf-btn on" data-n="finance" onclick="toggleNiche(this)">📊 FINANCE</div>
+      <div class="nf-btn on" data-n="geo" onclick="toggleNiche(this)">🌍 GEOPOLITICS</div>
+      <div class="nf-btn" data-n="crypto" onclick="toggleNiche(this)">₿ CRYPTO</div>
+      <div class="nf-btn" data-n="science" onclick="toggleNiche(this)">🔬 SCIENCE</div>
+    </div>
+    <div class="toolbar-spacer"></div>
+    <button class="fetch-main-btn" id="fetchBtn" onclick="fetchNews()">
+      <span id="fetchIcon">⚡</span><span id="fetchLbl">FETCH LIVE NEWS</span>
+    </button>
+  </div>
+
+  <div class="newsroom-grid">
+    <!-- COL 1: INCOMING -->
+    <div class="nr-col">
+      <div class="nr-col-header">
+        <div class="nr-col-title">INCOMING</div>
+        <div class="nr-col-count" id="colIncomingCount">0</div>
+      </div>
+      <div class="nr-col-body" id="colIncoming">
+        <div class="nr-empty"><div class="nr-empty-icon">📡</div><p>Fetch live news to load incoming stories from AI, Finance & Geopolitics sources.</p></div>
+      </div>
+    </div>
+
+    <!-- COL 2: STAGED -->
+    <div class="nr-col">
+      <div class="nr-col-header">
+        <div class="nr-col-title">STAGED</div>
+        <div class="nr-col-count" id="colStagedCount">0</div>
+      </div>
+      <div class="nr-col-body" id="colStaged">
+        <div class="nr-empty"><div class="nr-empty-icon">🎬</div><p>Stage stories here before adding to the export queue.</p></div>
+      </div>
+    </div>
+
+    <!-- COL 3: READY TO PUBLISH -->
+    <div class="nr-col">
+      <div class="nr-col-header">
+        <div class="nr-col-title">READY TO PUBLISH</div>
+        <div class="nr-col-count has" id="colReadyCount">0</div>
+      </div>
+      <div class="nr-col-body" id="colReady">
+        <div class="nr-empty"><div class="nr-empty-icon">✅</div><p>Stories processed and ready for YouTube upload.</p></div>
+      </div>
+    </div>
+
+    <!-- COL 4: UPLOAD QUEUE -->
+    <div class="nr-col">
+      <div class="nr-col-header">
+        <div class="nr-col-title">QUEUE</div>
+        <div class="nr-col-count" id="colQueueCount">0</div>
+      </div>
+      <div class="nr-col-body" id="colQueue">
+        <div class="nr-empty"><div class="nr-empty-icon">⏳</div><p>Upload queue empty.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ STUDIO VIEW ══════ -->
+<div class="view" id="view-studio">
+  <!-- LEFT: STORY PICKER -->
+  <div class="studio-left">
+    <div style="padding:10px 10px 6px; border-bottom:1px solid var(--border);">
+      <div class="flbl" style="margin-bottom:6px">Story Selection</div>
+    </div>
+    <div class="story-picker" id="storyPicker">
+      <div class="nr-empty"><div class="nr-empty-icon">📡</div><p>Fetch news in Newsroom first.</p></div>
+    </div>
+    <div class="studio-left-footer">
+      <button class="btn-full btn-ghost" onclick="prevStory()">← PREV STORY</button>
+      <button class="btn-full btn-ghost" onclick="nextStory()">NEXT STORY →</button>
+      <button class="btn-full btn-cyan" onclick="queueCurrentStory()">+ ADD TO QUEUE</button>
+    </div>
+  </div>
+
+  <!-- CENTER: STAGE -->
+  <div class="studio-center" id="studioCenter">
+    <div class="stage-label">BROADCAST PREVIEW — 9 : 1 6</div>
+
+    <!-- THE FRAME -->
+    <div class="shorts-frame" id="shortsFrame">
+      <div class="sf-bg" id="sfBg"></div>
+      <div class="sf-scanlines" id="sfScanlines"></div>
+      <div class="sf-noise"></div>
+      <div class="sf-vignette"></div>
+      <div class="sf-flash" id="sfFlash"></div>
+
+      <div class="sf-topbar">
+        <div class="sf-logo-area">
+          <div class="sf-logo-mark"></div>
+          <div class="sf-logo-name" id="sfLogoName">THE SIGNAL</div>
+        </div>
+        <div class="sf-live-badge" id="sfLiveBadge">LIVE</div>
+      </div>
+      <div class="sf-dateline" id="sfDateline"></div>
+
+      <div class="sf-content" id="sfContent">
+        <div class="sf-breaking-chip" id="sfBreakChip">
+          <div class="sf-breaking-pip"></div>BREAKING NEWS
+        </div>
+        <div class="sf-accent-rule" id="sfRule"></div>
+        <div class="sf-headline-text" id="sfHeadline">SELECT A STORY<br>TO BEGIN</div>
+        <div class="sf-subtext" id="sfSub">Go to Newsroom → fetch news → click a story to stage it</div>
+      </div>
+
+      <div class="sf-viz" id="sfViz">
+        <div class="sf-bar"></div><div class="sf-bar"></div>
+        <div class="sf-bar"></div><div class="sf-bar"></div><div class="sf-bar"></div>
+      </div>
+
+      <div class="sf-ticker" id="sfTicker">
+        <div class="sf-ticker-bg"></div>
+        <div class="sf-ticker-tag">SIGNAL</div>
+        <div class="sf-ticker-scroll"><div class="sf-ticker-text" id="sfTickerText">AI • FINANCE • GEOPOLITICS • MARKETS • BREAKING • LIVE UPDATES</div></div>
+      </div>
+
+      <div class="sf-lower">
+        <div class="sf-cat" id="sfCat">⚡ SIGNAL NEWS</div>
+        <div class="sf-src" id="sfSrc">signalnews.io</div>
+      </div>
+    </div>
+
+    <div class="stage-prog" id="stageProg"><div class="stage-prog-bar" id="stageProgBar"></div></div>
+
+    <div class="stage-controls">
+      <button class="sc-btn sc-ghost" onclick="prevStory()">◀</button>
+      <button class="sc-btn sc-primary" onclick="playPreview()">▶ PLAY</button>
+      <button class="sc-btn sc-ghost" onclick="nextStory()">▶</button>
+      <button class="sc-btn sc-export" onclick="startExport()">⬇ EXPORT</button>
+    </div>
+    <div class="stage-status" id="stageStatus">Ready — select a story</div>
+  </div>
+
+  <!-- RIGHT: INSPECTOR -->
+  <div class="studio-right">
+    <div class="inspector-tabs">
+      <button class="itab on" onclick="switchInspector('design',this)">DESIGN</button>
+      <button class="itab" onclick="switchInspector('export',this)">EXPORT</button>
+      <button class="itab" onclick="switchInspector('music',this)">MUSIC</button>
+    </div>
+    <div class="inspector-body">
+
+      <!-- DESIGN -->
+      <div class="ipanel on" id="ip-design">
+        <div class="fg">
+          <div class="flbl">Channel Name</div>
+          <input type="text" id="channelName" value="THE SIGNAL" oninput="liveUpdate()">
+        </div>
+
+        <div class="fg">
+          <div class="flbl">Alert Style</div>
+          <div class="segctl">
+            <button class="seg on" onclick="setBreakLabel('BREAKING NEWS',this)">BREAK</button>
+            <button class="seg" onclick="setBreakLabel('WORLD ALERT',this)">ALERT</button>
+            <button class="seg" onclick="setBreakLabel('MARKET UPDATE',this)">MARKET</button>
+            <button class="seg" onclick="setBreakLabel('TECH ALERT',this)">TECH</button>
+          </div>
+        </div>
+
+        <div class="fg">
+          <div class="flbl">Theme Presets</div>
+          <div class="theme-row">
+            <div class="tsw on" style="background:linear-gradient(135deg,#0d0d22,#000)" onclick="applyTheme({a:'#e81c3c',r:'232,28,60',bg:'linear-gradient(160deg,#0c0c20 0%,#060618 50%,#000 100%)'},this)"></div>
+            <div class="tsw" style="background:linear-gradient(135deg,#120e00,#000)" onclick="applyTheme({a:'#ffab40',r:'255,171,64',bg:'linear-gradient(160deg,#130e00 0%,#060400 50%,#000 100%)'},this)"></div>
+            <div class="tsw" style="background:linear-gradient(135deg,#001525,#000)" onclick="applyTheme({a:'#18d4f5',r:'24,212,245',bg:'linear-gradient(160deg,#001828 0%,#000c14 50%,#000 100%)'},this)"></div>
+            <div class="tsw" style="background:linear-gradient(135deg,#001a08,#000)" onclick="applyTheme({a:'#00e676',r:'0,230,118',bg:'linear-gradient(160deg,#001c0a 0%,#000d04 50%,#000 100%)'},this)"></div>
+            <div class="tsw" style="background:linear-gradient(135deg,#1a0022,#000)" onclick="applyTheme({a:'#9c5cf5',r:'156,92,245',bg:'linear-gradient(160deg,#1a0022 0%,#0a000e 50%,#000 100%)'},this)"></div>
+          </div>
+        </div>
+
+        <div class="fg">
+          <div class="flbl">Custom Colors</div>
+          <div class="cgrid">
+            <div class="cfield"><label>Accent</label><input type="color" id="cAccent" value="#e81c3c" oninput="applyCustomColors()"></div>
+            <div class="cfield"><label>Headline</label><input type="color" id="cHeadline" value="#ffffff" oninput="applyCustomColors()"></div>
+            <div class="cfield"><label>BG Top</label><input type="color" id="cBgTop" value="#0c0c20" oninput="applyCustomColors()"></div>
+            <div class="cfield"><label>BG Bottom</label><input type="color" id="cBgBot" value="#060618" oninput="applyCustomColors()"></div>
+          </div>
+        </div>
+
+        <div class="fg">
+          <div class="flbl">Headline Size</div>
+          <div class="slrow">
+            <input type="range" min="16" max="44" value="26" id="hlSize" oninput="document.getElementById('sfHeadline').style.fontSize=this.value+'px';document.getElementById('hlSizeV').textContent=this.value+'px'">
+            <div class="slval" id="hlSizeV">26px</div>
+          </div>
+        </div>
+
+        <div class="divline"></div>
+
+        <div class="fg" style="gap:10px">
+          <div class="flbl">Elements</div>
+          <div class="tog-row2"><span class="tog-lbl">Live Badge</span><div class="toggle2 on" id="t-live" onclick="togEl('live')"></div></div>
+          <div class="tog-row2"><span class="tog-lbl">Ticker Bar</span><div class="toggle2 on" id="t-ticker" onclick="togEl('ticker')"></div></div>
+          <div class="tog-row2"><span class="tog-lbl">Sound Visualizer</span><div class="toggle2 on" id="t-viz" onclick="togEl('viz')"></div></div>
+          <div class="tog-row2"><span class="tog-lbl">Scanlines</span><div class="toggle2 on" id="t-scan" onclick="togEl('scan')"></div></div>
+          <div class="tog-row2"><span class="tog-lbl">Vignette</span><div class="toggle2 on" id="t-vig" onclick="togEl('vig')"></div></div>
+        </div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="ipanel" id="ip-export">
+        <div class="fg">
+          <div class="flbl">Duration</div>
+          <div class="segctl">
+            <button class="seg" onclick="setDur(15,this)">15s</button>
+            <button class="seg on" onclick="setDur(30,this)">30s</button>
+            <button class="seg" onclick="setDur(45,this)">45s</button>
+            <button class="seg" onclick="setDur(60,this)">60s</button>
+          </div>
+        </div>
+
+        <div class="fg">
+          <div class="flbl">Output Resolution</div>
+          <div class="quality-row">
+            <div class="qcard" onclick="setQual('720p',this)"><div class="qcard-val">720p</div><div class="qcard-sub">HD · Fast</div></div>
+            <div class="qcard on" onclick="setQual('1080p',this)"><div class="qcard-val">1080p</div><div class="qcard-sub">FHD · Rec</div></div>
+            <div class="qcard" onclick="setQual('4K',this)"><div class="qcard-val">4K</div><div class="qcard-sub">UHD · Slow</div></div>
+          </div>
+        </div>
+
+        <div class="fg">
+          <div class="flbl">Capture Rate (snapshots/sec)</div>
+          <div class="slrow">
+            <input type="range" min="1" max="8" value="4" id="capRate" oninput="S.captureRate=+this.value;document.getElementById('capRateV').textContent=this.value+'/s'">
+            <div class="slval" id="capRateV">4/s</div>
+          </div>
+        </div>
+
+        <div class="fg">
+          <div class="flbl">Video Bitrate</div>
+          <div class="slrow">
+            <input type="range" min="2" max="25" value="10" id="bitrate" oninput="S.bitrate=this.value*1e6;document.getElementById('bitrateV').textContent=this.value+'Mbps'">
+            <div class="slval" id="bitrateV">10Mbps</div>
+          </div>
+        </div>
+
+        <div class="fg">
+          <div class="flbl">Stream FPS</div>
+          <div class="segctl">
+            <button class="seg" onclick="setFps(24,this)">24</button>
+            <button class="seg on" onclick="setFps(30,this)">30</button>
+            <button class="seg" onclick="setFps(60,this)">60</button>
+          </div>
+        </div>
+
+        <div class="fg">
+          <div class="flbl">Container Format</div>
+          <div class="segctl">
+            <button class="seg on" onclick="setFmt('webm',this)">WEBM</button>
+            <button class="seg" onclick="setFmt('mp4',this)">MP4</button>
+          </div>
+        </div>
+
+        <div class="divline"></div>
+
+        <button class="btn-full btn-cyan" onclick="startExport()">🎬 RECORD & EXPORT VIDEO</button>
+        <button class="btn-full btn-ghost" onclick="exportPNG()">🖼 EXPORT FRAME (PNG)</button>
+        <button class="btn-full btn-green" onclick="queueCurrentStory()">📤 ADD TO PUBLISH QUEUE</button>
+      </div>
+
+      <!-- MUSIC -->
+      <div class="ipanel" id="ip-music">
+        <div class="fg">
+          <div class="flbl">Background Track</div>
+          <div class="mgrid">
+            <div class="mcard on" id="mc-none" onclick="setMusic('none',this)"><div class="mcard-icon">🔇</div><div class="mcard-label">Silent</div></div>
+            <div class="mcard" id="mc-urgent" onclick="setMusic('urgent',this)"><div class="mcard-icon">🚨</div><div class="mcard-label">Urgent</div></div>
+            <div class="mcard" id="mc-finance" onclick="setMusic('finance',this)"><div class="mcard-icon">📊</div><div class="mcard-label">Finance</div></div>
+            <div class="mcard" id="mc-cinematic" onclick="setMusic('cinematic',this)"><div class="mcard-icon">🎬</div><div class="mcard-label">Cinematic</div></div>
+            <div class="mcard" id="mc-tech" onclick="setMusic('tech',this)"><div class="mcard-icon">⚡</div><div class="mcard-label">Tech</div></div>
+            <div class="mcard" id="mc-drama" onclick="setMusic('drama',this)"><div class="mcard-icon">🌍</div><div class="mcard-label">Drama</div></div>
+          </div>
+        </div>
+
+        <div class="fg">
+          <div class="flbl">Track Volume</div>
+          <div class="slrow">
+            <input type="range" min="0" max="100" value="30" id="musicVol" oninput="updateMusicVol()">
+            <div class="slval" id="musicVolV">30%</div>
+          </div>
+        </div>
+
+        <div class="fg">
+          <div class="flbl">Tempo Override</div>
+          <div class="slrow">
+            <input type="range" min="60" max="180" value="100" id="musicTempo" oninput="document.getElementById('musicTempoV').textContent=this.value+'bpm'">
+            <div class="slval" id="musicTempoV">100bpm</div>
+          </div>
+        </div>
+
+        <div class="divline"></div>
+
+        <div class="fg" style="gap:10px">
+          <div class="flbl">Sound FX</div>
+          <div class="tog-row2"><span class="tog-lbl">Breaking Alert Beeps</span><div class="toggle2 on" id="t-sound" onclick="togEl('sound')"></div></div>
+          <div class="tog-row2"><span class="tog-lbl">Mix Audio Into Export</span><div class="toggle2 on" id="t-audiomix" onclick="togEl('audiomix')"></div></div>
+        </div>
+
+        <div class="info-callout">
+          🎵 All music is synthesized in real-time via Web Audio API — zero copyright issues. Mixed directly into exported video.
+        </div>
+      </div>
+
+    </div><!-- inspector-body -->
+  </div><!-- studio-right -->
+</div><!-- view-studio -->
+
+<!-- ══════ ANALYTICS VIEW ══════ -->
+<div class="view" id="view-analytics">
+  <div class="analytics-header">
+    <div>
+      <div class="analytics-title">Performance Analytics</div>
+      <div class="analytics-sub" id="analyticsDate">LOADING...</div>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Published</div>
+      <div class="kpi-val" id="kpiPublished">0</div>
+      <div class="kpi-delta up" id="kpiPubDelta">—</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Queue Size</div>
+      <div class="kpi-val" id="kpiQueue">0</div>
+      <div class="kpi-delta" id="kpiQueueDelta">stories pending</div>
+    </div>
+    <div class="kpi-card cyan">
+      <div class="kpi-label">Automation</div>
+      <div class="kpi-val" id="kpiAuto">OFF</div>
+      <div class="kpi-delta" id="kpiAutoDelta">not running</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Topics Active</div>
+      <div class="kpi-val" id="kpiTopics">3</div>
+      <div class="kpi-delta up">AI · FIN · GEO</div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <div class="chart-card-title">Posts by Category</div>
+      <div class="mini-bars" id="categoryChart">
+        <div class="mbar-wrap"><div class="mbar" style="height:65%;background:var(--red)"></div><div class="mbar-label">AI</div></div>
+        <div class="mbar-wrap"><div class="mbar" style="height:45%;background:var(--amber)"></div><div class="mbar-label">FIN</div></div>
+        <div class="mbar-wrap"><div class="mbar" style="height:35%;background:var(--cyan)"></div><div class="mbar-label">GEO</div></div>
+        <div class="mbar-wrap"><div class="mbar" style="height:20%;background:var(--purple)"></div><div class="mbar-label">CRYPTO</div></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Publication History</div>
+      <table class="history-table" id="historyTable">
+        <thead><tr><th>Headline</th><th>Category</th><th>Status</th><th>Time</th></tr></thead>
+        <tbody id="historyBody"><tr><td colspan="4" style="color:var(--text3);font-size:11px;padding:16px 8px">No publications yet</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SETTINGS VIEW ══════ -->
+<div class="view" id="view-settings">
+  <div class="settings-nav">
+    <div class="snav-sec">General</div>
+    <div class="snav-link on" onclick="switchSettingsSection('brand',this)">🎨 Brand Kit</div>
+    <div class="snav-link" onclick="switchSettingsSection('channel',this)">📺 Channel</div>
+    <div class="snav-sec">Integrations</div>
+    <div class="snav-link" onclick="switchSettingsSection('youtube',this)">▶ YouTube API</div>
+    <div class="snav-link" onclick="switchSettingsSection('automation',this)">⚙ Automation</div>
+    <div class="snav-sec">System</div>
+    <div class="snav-link" onclick="switchSettingsSection('export',this)">⬇ Export Defaults</div>
+    <div class="snav-link" onclick="switchSettingsSection('shortcuts',this)">⌨ Shortcuts</div>
+  </div>
+
+  <div class="settings-body">
+    <!-- BRAND -->
+    <div class="settings-section on" id="ss-brand">
+      <div class="settings-title">Brand Kit</div>
+      <div class="settings-row">
+        <div class="settings-row-title">Channel Identity</div>
+        <div class="fg"><div class="flbl">Channel Name</div><input type="text" id="settingChannel" value="THE SIGNAL" oninput="document.getElementById('sfLogoName').textContent=this.value.toUpperCase();document.getElementById('channelName').value=this.value"></div>
+        <div class="fg"><div class="flbl">Tagline / Source</div><input type="text" id="settingTagline" value="signalnews.io" oninput="document.getElementById('sfSrc').textContent=this.value"></div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-title">Brand Colors</div>
+        <div class="cgrid">
+          <div class="cfield"><label>Primary Accent</label><input type="color" value="#e81c3c" oninput="document.getElementById('cAccent').value=this.value;applyCustomColors()"></div>
+          <div class="cfield"><label>Headline Color</label><input type="color" value="#ffffff" oninput="document.getElementById('cHeadline').value=this.value;applyCustomColors()"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHANNEL -->
+    <div class="settings-section" id="ss-channel">
+      <div class="settings-title">Channel Settings</div>
+      <div class="settings-row">
+        <div class="settings-row-title">Default Video Title Template</div>
+        <div class="settings-row-sub">Use <code style="color:var(--cyan)">{headline}</code>, <code style="color:var(--cyan)">{category}</code>, <code style="color:var(--cyan)">{date}</code> as variables.</div>
+        <input type="text" id="ytTitleTpl" value="🔴 {headline} | THE SIGNAL #shorts #news #breaking">
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-title">Default Tags</div>
+        <textarea id="ytTags">news,shorts,breaking,ai,finance,geopolitics,daily,viral</textarea>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-title">Default Description</div>
+        <textarea id="ytDesc" style="height:80px">{subtext}
+
+Stay informed with THE SIGNAL — your source for AI, Finance & Geopolitics news.
+
+#shorts #news #breaking #ai #finance</textarea>
+      </div>
+    </div>
+
+    <!-- YOUTUBE API -->
+    <div class="settings-section" id="ss-youtube">
+      <div class="settings-title">YouTube API</div>
+      <div class="settings-row">
+        <div class="settings-row-title">OAuth 2.0 Credentials</div>
+        <div class="settings-row-sub">Required for automatic uploads. Get credentials from Google Cloud Console.</div>
+        <div class="fg"><div class="flbl">Client ID</div><input type="text" id="ytClientId" placeholder="xxxxxxxxxx.apps.googleusercontent.com" oninput="saveSettings()"></div>
+        <div class="fg"><div class="flbl">API Key</div><input type="password" id="ytApiKey" placeholder="AIzaSy..." oninput="saveSettings()"></div>
+        <button class="btn-full btn-red" style="margin-top:6px" onclick="openYTModal()">▶ AUTHORIZE WITH GOOGLE</button>
+      </div>
+      <div class="info-callout">
+        <strong>Setup guide:</strong><br>
+        1. Go to <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a><br>
+        2. Create a project → Enable <strong>YouTube Data API v3</strong><br>
+        3. Create <strong>OAuth 2.0 credentials</strong> (Web Application type)<br>
+        4. Add your page URL as an authorized redirect URI<br>
+        5. Paste Client ID above → click Authorize
+      </div>
+    </div>
+
+    <!-- AUTOMATION -->
+    <div class="settings-section" id="ss-automation">
+      <div class="settings-title">Automation Engine</div>
+      <div class="settings-row">
+        <div class="settings-row-title">Post Interval</div>
+        <div class="settings-row-sub">How often to auto-fetch news, produce a Short, and upload to YouTube.</div>
+        <div class="segctl">
+          <button class="seg" onclick="S.schedHours=1;this.parentElement.querySelectorAll('.seg').forEach(s=>s.classList.remove('on'));this.classList.add('on')">1h</button>
+          <button class="seg" onclick="S.schedHours=2;this.parentElement.querySelectorAll('.seg').forEach(s=>s.classList.remove('on'));this.classList.add('on')">2h</button>
+          <button class="seg on" onclick="S.schedHours=3;this.parentElement.querySelectorAll('.seg').forEach(s=>s.classList.remove('on'));this.classList.add('on')">3h</button>
+          <button class="seg" onclick="S.schedHours=6;this.parentElement.querySelectorAll('.seg').forEach(s=>s.classList.remove('on'));this.classList.add('on')">6h</button>
+          <button class="seg" onclick="S.schedHours=12;this.parentElement.querySelectorAll('.seg').forEach(s=>s.classList.remove('on'));this.classList.add('on')">12h</button>
+          <button class="seg" onclick="S.schedHours=24;this.parentElement.querySelectorAll('.seg').forEach(s=>s.classList.remove('on'));this.classList.add('on')">24h</button>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-title">Automation Controls</div>
+        <button class="btn-full btn-cyan" id="autoStartBtn" onclick="toggleAutomation()">▶ START AUTOMATION ENGINE</button>
+        <button class="btn-full btn-ghost" onclick="manualPost()">📤 MANUAL POST NOW</button>
+        <div class="settings-row-sub" id="automationStatusText" style="margin-top:8px">Status: Not running</div>
+      </div>
+    </div>
+
+    <!-- EXPORT DEFAULTS -->
+    <div class="settings-section" id="ss-export">
+      <div class="settings-title">Export Defaults</div>
+      <div class="settings-row">
+        <div class="settings-row-title">Resolution & Quality</div>
+        <div class="quality-row">
+          <div class="qcard" onclick="setQual('720p',this)"><div class="qcard-val">720p</div><div class="qcard-sub">HD</div></div>
+          <div class="qcard on" onclick="setQual('1080p',this)"><div class="qcard-val">1080p</div><div class="qcard-sub">Recommended</div></div>
+          <div class="qcard" onclick="setQual('4K',this)"><div class="qcard-val">4K</div><div class="qcard-sub">Ultra HD</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHORTCUTS -->
+    <div class="settings-section" id="ss-shortcuts">
+      <div class="settings-title">Keyboard Shortcuts</div>
+      <div class="settings-row">
+        <table class="history-table" style="width:100%">
+          <thead><tr><th>Action</th><th>Shortcut</th></tr></thead>
+          <tbody>
+            <tr><td>Fetch News</td><td><span class="kbd">F</span></td></tr>
+            <tr><td>Play Preview</td><td><span class="kbd">Space</span></td></tr>
+            <tr><td>Next Story</td><td><span class="kbd">→</span></td></tr>
+            <tr><td>Prev Story</td><td><span class="kbd">←</span></td></tr>
+            <tr><td>Export Video</td><td><span class="kbd">E</span></td></tr>
+            <tr><td>Export PNG</td><td><span class="kbd">P</span></td></tr>
+            <tr><td>Go to Newsroom</td><td><span class="kbd">1</span></td></tr>
+            <tr><td>Go to Studio</td><td><span class="kbd">2</span></td></tr>
+            <tr><td>Go to Analytics</td><td><span class="kbd">3</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- workspace -->
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <div class="sb-item"><div class="sb-dot grey" id="sbDot"></div><span id="sbText">SIGNAL STUDIO ENTERPRISE</span></div>
+  <div class="sb-item">STORIES: <span id="sbStories" style="color:var(--text2)">0</span></div>
+  <div class="sb-item">PUBLISHED: <span id="sbPub" style="color:var(--green)">0</span></div>
+  <div class="sb-item" id="sbNextPost" style="display:none">NEXT POST: <span id="sbNextPostTime" style="color:var(--cyan)">—</span></div>
+  <div class="sb-item" style="margin-left:auto"><span class="kbd">F</span> fetch &nbsp;<span class="kbd">Space</span> play &nbsp;<span class="kbd">E</span> export &nbsp;<span class="kbd">1-3</span> views</div>
+</div>
+
+<!-- YT MODAL -->
+<div class="modal-bg" id="ytModal">
+  <div class="modal-box">
+    <div class="modal-title">Connect YouTube</div>
+    <div class="modal-body">To auto-post Shorts, authorize Signal Studio with your Google account. This opens a Google OAuth popup — approve the <strong>youtube.upload</strong> scope.</div>
+    <div class="modal-body" style="margin-top:-6px">After authorization, your access token will be detected automatically.</div>
+    <div class="modal-actions">
+      <button class="mbtn mbtn-red" onclick="startYTAuth()">▶ Sign in with Google</button>
+      <button class="mbtn mbtn-ghost" onclick="closeYTModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toasts" id="toastContainer"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// ENTERPRISE STATE
+// ═══════════════════════════════════════════
+const S = {
+  stories: [],               // all fetched stories
+  staged: [],                // staged stories
+  queue: [],                 // export/upload queue
+  published: [],             // publication history
+  storyIdx: 0,
+  niches: new Set(['ai','finance','geo']),
+  opts: { live:true, ticker:true, viz:true, scan:true, vig:true, sound:true, audiomix:true },
+  music: 'none',
+  musicVol: 0.30,
+  duration: 30,
+  quality: '1080p',
+  fps: 30,
+  bitrate: 10_000_000,
+  format: 'webm',
+  captureRate: 4,
+  schedHours: 3,
+  schedTimer: null,
+  schedCountdown: null,
+  schedRunning: false,
+  nextPostAt: null,
+  ytToken: null,
+  audioCtx: null,
+  musicNodes: [],
+  musicGain: null,
+};
+
+const QUALITY_MAP = {
+  '720p':  { w:720,  h:1280, scale:2.77 },
+  '1080p': { w:1080, h:1920, scale:4.15 },
+  '4K':    { w:2160, h:3840, scale:8.3  },
+};
+
+// ═══════════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════════
+function startClock() {
+  function tick() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('sysClockDisplay').textContent = `${h}:${m}:${s}`;
+  }
+  tick(); setInterval(tick, 1000);
+}
+startClock();
+
+function initDate() {
+  const d = new Date();
+  document.getElementById('sfDateline').textContent = d.toLocaleDateString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric'}).toUpperCase();
+  document.getElementById('analyticsDate').textContent = 'DASHBOARD — ' + d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}).toUpperCase();
+}
+initDate();
+
+// ═══════════════════════════════════════════
+// VIEW ROUTING
+// ═══════════════════════════════════════════
+function gotoView(name, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.snav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  el.classList.add('active');
+  if (name === 'studio') populateStoryPicker();
+  if (name === 'analytics') refreshAnalytics();
+}
+
+function switchInspector(name, el) {
+  document.querySelectorAll('.itab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.ipanel').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('ip-'+name).classList.add('on');
+}
+
+function switchSettingsSection(name, el) {
+  document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.snav-link').forEach(l => l.classList.remove('on'));
+  document.getElementById('ss-'+name).classList.add('on');
+  el.classList.add('on');
+}
+
+// ═══════════════════════════════════════════
+// NICHE FILTER
+// ═══════════════════════════════════════════
+function toggleNiche(el) {
+  const n = el.dataset.n;
+  if (S.niches.has(n)) { if (S.niches.size > 1) { S.niches.delete(n); el.classList.remove('on'); } }
+  else { S.niches.add(n); el.classList.add('on'); }
+  updateMetrics();
+}
+
+// ═══════════════════════════════════════════
+// FETCH NEWS
+// ═══════════════════════════════════════════
+async function fetchNews() {
+  const btn = document.getElementById('fetchBtn');
+  const icon = document.getElementById('fetchIcon');
+  const lbl = document.getElementById('fetchLbl');
+  btn.disabled = true; icon.className='spin'; icon.textContent='↻'; lbl.textContent='SEARCHING WEB...';
+  setStatus('Fetching live news...','dot-blink');
+
+  const topicMap = {
+    ai: 'artificial intelligence, machine learning, AI regulation, big tech companies, AI startups',
+    finance: 'stock markets, S&P 500, Federal Reserve, interest rates, earnings, cryptocurrency, economy',
+    geo: 'geopolitics, international relations, wars, sanctions, elections, diplomacy, UN',
+    crypto: 'Bitcoin, Ethereum, crypto exchanges, DeFi, Web3, blockchain regulation',
+    science: 'scientific breakthroughs, space, climate, biotech, medicine',
+  };
+  const topics = [...S.niches].map(n => topicMap[n]).join('; ');
+
+  try {
+    const res = await fetch('/api/news', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        topics,
+        niches: [...S.niches]
+      })
+    });
+    if (!res.ok) {
+      const errData = await res.json().catch(()=>({}));
+      throw new Error(errData.error || `Server error ${res.status}`);
+    }
+    const data = await res.json();
+    if (!data.stories) throw new Error('No stories returned from server');
+
+    S.stories = data.stories;
+    S.storyIdx = 0;
+
+    renderNewsroom();
+    populateStoryPicker();
+
+    if (S.stories.length) {
+      loadStoryToStudio(0);
+      restartTicker(S.stories.map(s=>s.ticker||s.headline).join(' • ') + ' • ');
+    }
+
+    updateMetrics();
+    setStatus(`${S.stories.length} stories loaded`,'ok');
+    toast(`✓ ${S.stories.length} live stories fetched`, 't-ok');
+
+  } catch(e) {
+    setStatus('Fetch failed','err');
+    toast('Fetch error: ' + e.message, 't-err');
+  }
+
+  btn.disabled=false; icon.className=''; icon.textContent='⚡'; lbl.textContent='REFRESH LIVE NEWS';
+}
+
+// ═══════════════════════════════════════════
+// NEWSROOM RENDER
+// ═══════════════════════════════════════════
+function tagClass(tag) {
+  if (tag.includes('AI')||tag.includes('TECH')) return 'ai';
+  if (tag.includes('FIN')) return 'fin';
+  if (tag.includes('GEO')) return 'geo';
+  return 'brk';
+}
+
+function renderNewsroom() {
+  const col = document.getElementById('colIncoming');
+  col.innerHTML = '';
+  document.getElementById('colIncomingCount').textContent = S.stories.length;
+  document.getElementById('colIncomingCount').className = S.stories.length ? 'nr-col-count has' : 'nr-col-count';
+
+  S.stories.forEach((s,i) => {
+    const el = document.createElement('div');
+    el.className = 'story-tile';
+    el.innerHTML = `
+      <div class="st-tag ${tagClass(s.tag)}">${s.tag}</div>
+      <div class="st-headline">${s.headline}</div>
+      <div class="st-sub">${s.subtext}</div>
+      <div class="st-meta">
+        <div class="st-source">${s.source}</div>
+        <div class="st-actions">
+          <div class="st-btn" onclick="stageStory(${i},event)">STAGE</div>
+          <div class="st-btn green" onclick="openInStudio(${i},event)">STUDIO →</div>
+        </div>
+      </div>`;
+    el.onclick = () => openInStudio(i);
+    col.appendChild(el);
+  });
+}
+
+function stageStory(i, e) {
+  if (e) e.stopPropagation();
+  const s = S.stories[i];
+  if (S.staged.find(x => x.headline === s.headline)) { toast('Already staged','t-info'); return; }
+  S.staged.push({...s, status:'staged'});
+  renderStaged();
+  toast('Story staged','t-ok');
+  updateMetrics();
+}
+
+function renderStaged() {
+  const col = document.getElementById('colStaged');
+  col.innerHTML = '';
+  document.getElementById('colStagedCount').textContent = S.staged.length;
+  S.staged.forEach((s,i) => {
+    const el = document.createElement('div');
+    el.className = 'story-tile queued';
+    el.innerHTML = `
+      <div class="st-tag ${tagClass(s.tag)}">${s.tag}</div>
+      <div class="st-headline">${s.headline}</div>
+      <div class="st-sub">${s.subtext}</div>
+      <div class="st-meta">
+        <div class="st-source">${s.source}</div>
+        <div class="st-actions">
+          <div class="st-btn green" onclick="markReady(${i},event)">MARK READY</div>
+        </div>
+      </div>`;
+    col.appendChild(el);
+  });
+}
+
+function markReady(i, e) {
+  if (e) e.stopPropagation();
+  const s = S.staged.splice(i, 1)[0];
+  s.status = 'ready';
+  S.queue.push(s);
+  renderStaged();
+  renderQueue();
+  toast('Story marked ready','t-ok');
+  updateMetrics();
+}
+
+function renderQueue() {
+  const colQ = document.getElementById('colQueue');
+  const colR = document.getElementById('colReady');
+  colQ.innerHTML = ''; colR.innerHTML = '';
+  const ready = S.queue.filter(s => s.status==='ready');
+  const queued = S.queue.filter(s => s.status!=='ready');
+  document.getElementById('colQueueCount').textContent = S.queue.length;
+  document.getElementById('colReadyCount').textContent = ready.length;
+  document.getElementById('colReadyCount').className = ready.length ? 'nr-col-count has' : 'nr-col-count';
+
+  ready.forEach((s,i) => {
+    const el = document.createElement('div');
+    el.className = 'story-tile ready';
+    el.innerHTML = `<div class="st-tag ${tagClass(s.tag)}">${s.tag}</div><div class="st-headline">${s.headline}</div><div class="st-meta"><div class="st-source">${s.source}</div><div class="st-actions"><div class="st-btn green" onclick="uploadStory('${s.headline.replace(/'/g,"\\'")}')">↑ UPLOAD</div></div></div>`;
+    colR.appendChild(el);
+  });
+  queued.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'story-tile';
+    el.innerHTML = `<div class="qi-title">${s.headline}</div><div class="qi-status ${s.status}">${s.status.toUpperCase()}</div>`;
+    colQ.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════════
+// STUDIO BRIDGE
+// ═══════════════════════════════════════════
+function openInStudio(i, e) {
+  if (e) e.stopPropagation();
+  S.storyIdx = i;
+  loadStoryToStudio(i);
+  // Switch to studio
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.snav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-studio').classList.add('active');
+  document.querySelector('.snav-item:nth-child(2)').classList.add('active');
+  populateStoryPicker();
+  playPreview();
+}
+
+function populateStoryPicker() {
+  const picker = document.getElementById('storyPicker');
+  if (!S.stories.length) { picker.innerHTML='<div class="nr-empty"><div class="nr-empty-icon">📡</div><p>Fetch news in Newsroom.</p></div>'; return; }
+  picker.innerHTML = S.stories.map((s,i) => `
+    <div class="sp-item ${i===S.storyIdx?'sel':''}" onclick="selectStory(${i})">
+      <div class="sp-item-tag">${s.tag}</div>
+      <div class="sp-item-hl">${s.headline.substring(0,50)}${s.headline.length>50?'...':''}</div>
+    </div>`).join('');
+}
+
+function selectStory(i) {
+  S.storyIdx = i;
+  loadStoryToStudio(i);
+  populateStoryPicker();
+  playPreview();
+}
+
+function prevStory() {
+  if (!S.stories.length) return;
+  S.storyIdx = (S.storyIdx - 1 + S.stories.length) % S.stories.length;
+  selectStory(S.storyIdx);
+}
+function nextStory() {
+  if (!S.stories.length) return;
+  S.storyIdx = (S.storyIdx + 1) % S.stories.length;
+  selectStory(S.storyIdx);
+}
+
+function loadStoryToStudio(i) {
+  const s = S.stories[i];
+  if (!s) return;
+  document.getElementById('sfBreakChip').innerHTML = `<div class="sf-breaking-pip"></div>${s.breakLabel||'BREAKING NEWS'}`;
+  document.getElementById('sfHeadline').textContent = s.headline;
+  document.getElementById('sfSub').textContent = s.subtext;
+  const catMap = {'AI & TECH':'⚡ AI & TECHNOLOGY','FINANCE':'📊 FINANCE & MARKETS','GEOPOLITICS':'🌍 GEOPOLITICS','CRYPTO':'₿ CRYPTO','SCIENCE':'🔬 SCIENCE'};
+  document.getElementById('sfCat').textContent = catMap[s.tag] || '🔴 BREAKING';
+  document.getElementById('sfSrc').textContent = s.source || 'Live';
+  document.getElementById('stageStatus').textContent = `Story ${i+1}/${S.stories.length} — ${s.tag}`;
+}
+
+function queueCurrentStory() {
+  if (!S.stories.length) { toast('No story selected','t-err'); return; }
+  const s = S.stories[S.storyIdx];
+  if (S.queue.find(x=>x.headline===s.headline)) { toast('Already in queue','t-info'); return; }
+  S.queue.push({...s, status:'queued'});
+  renderQueue(); updateMetrics();
+  toast('Added to queue','t-ok');
+}
+
+// ═══════════════════════════════════════════
+// PREVIEW
+// ═══════════════════════════════════════════
+function playPreview() {
+  // Flash
+  const fl = document.getElementById('sfFlash');
+  fl.style.animation='none'; fl.offsetHeight;
+  fl.style.animation='flashGo .5s ease-out forwards';
+
+  // Animate content
+  const cnt = document.getElementById('sfContent');
+  cnt.classList.remove('frame-playing'); cnt.offsetHeight; cnt.classList.add('frame-playing');
+
+  if (S.opts.sound) playAlertBeeps();
+  startMusicPreview();
+}
+
+// ═══════════════════════════════════════════
+// DESIGN CONTROLS
+// ═══════════════════════════════════════════
+function liveUpdate() {
+  document.getElementById('sfLogoName').textContent = document.getElementById('channelName').value.toUpperCase();
+}
+
+function setBreakLabel(label, el) {
+  el.closest('.segctl').querySelectorAll('.seg').forEach(s=>s.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('sfBreakChip').innerHTML = `<div class="sf-breaking-pip"></div>${label}`;
+}
+
+function applyTheme(t, el) {
+  document.querySelectorAll('.tsw').forEach(s=>s.classList.remove('on'));
+  el.classList.add('on');
+  document.documentElement.style.setProperty('--accent', t.a);
+  document.getElementById('sfBg').style.background = t.bg;
+  document.getElementById('cAccent').value = t.a;
+}
+
+function applyCustomColors() {
+  const a = document.getElementById('cAccent').value;
+  const hl = document.getElementById('cHeadline').value;
+  const top = document.getElementById('cBgTop').value;
+  const bot = document.getElementById('cBgBot').value;
+  document.getElementById('sfBg').style.background = `linear-gradient(160deg,${top} 0%,${bot} 50%,#000 100%)`;
+  document.getElementById('sfHeadline').style.color = hl;
+  const r=parseInt(a.slice(1,3),16), g=parseInt(a.slice(3,5),16), b=parseInt(a.slice(5,7),16);
+  document.documentElement.style.setProperty('--accent',a);
+  document.documentElement.style.setProperty('--accent-rgb',`${r},${g},${b}`);
+  document.querySelectorAll('.tsw').forEach(s=>s.classList.remove('on'));
+}
+
+const togTargets = {
+  live:   () => document.getElementById('sfLiveBadge').style.display = S.opts.live?'block':'none',
+  ticker: () => document.getElementById('sfTicker').style.display = S.opts.ticker?'flex':'none',
+  viz:    () => document.getElementById('sfViz').style.display = S.opts.viz?'flex':'none',
+  scan:   () => document.getElementById('sfScanlines').style.display = S.opts.scan?'block':'none',
+  vig:    () => document.querySelector('.sf-vignette').style.display = S.opts.vig?'block':'none',
+};
+
+function togEl(key) {
+  S.opts[key] = !S.opts[key];
+  document.getElementById('t-'+key)?.classList.toggle('on', S.opts[key]);
+  togTargets[key]?.();
+}
+
+// ═══════════════════════════════════════════
+// EXPORT SETTINGS
+// ═══════════════════════════════════════════
+function setDur(d,el) { S.duration=d; el.closest('.segctl').querySelectorAll('.seg').forEach(s=>s.classList.remove('on')); el.classList.add('on'); }
+function setFps(f,el) { S.fps=f; el.closest('.segctl').querySelectorAll('.seg').forEach(s=>s.classList.remove('on')); el.classList.add('on'); }
+function setFmt(f,el) { S.format=f; el.closest('.segctl').querySelectorAll('.seg').forEach(s=>s.classList.remove('on')); el.classList.add('on'); }
+function setQual(q,el) {
+  S.quality=q;
+  document.querySelectorAll('.qcard').forEach(c=>c.classList.remove('on'));
+  document.querySelectorAll('.qcard').forEach(c=>{ if(c.querySelector('.qcard-val')?.textContent===q) c.classList.add('on'); });
+}
+
+// ═══════════════════════════════════════════
+// MUSIC ENGINE
+// ═══════════════════════════════════════════
+function getACtx() {
+  if (!S.audioCtx||S.audioCtx.state==='closed') S.audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  if (S.audioCtx.state==='suspended') S.audioCtx.resume();
+  return S.audioCtx;
+}
+
+function stopMusic() {
+  S.musicNodes.forEach(n=>{try{n.stop()}catch(e){}});
+  S.musicNodes=[];
+  if (S.musicGain) { S.musicGain.disconnect(); S.musicGain=null; }
+}
+
+function startMusicPreview() {
+  stopMusic();
+  if (S.music==='none') return;
+  const ctx = getACtx();
+  const g = ctx.createGain(); g.gain.value=S.musicVol; g.connect(ctx.destination);
+  S.musicGain=g; buildMusicTrack(S.music, ctx, g, S.duration);
+}
+
+function buildMusicTrack(style, ctx, dest, durationSec) {
+  const bpm = parseInt(document.getElementById('musicTempo')?.value||100);
+  const beat = 60/bpm;
+  const totalBeats = Math.ceil(durationSec/beat);
+
+  const osc = (type,freq,start,dur,vol,d) => {
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.type=type; o.frequency.value=freq;
+    g.gain.setValueAtTime(0,ctx.currentTime+start);
+    g.gain.linearRampToValueAtTime(vol,ctx.currentTime+start+0.03);
+    g.gain.linearRampToValueAtTime(0,ctx.currentTime+start+dur-0.03);
+    o.connect(g); g.connect(d);
+    o.start(ctx.currentTime+start); o.stop(ctx.currentTime+start+dur+0.05);
+    S.musicNodes.push(o);
+  };
+
+  if (style==='urgent') {
+    // Driving urgent loop — bass + lead pattern
+    for(let i=0;i<totalBeats;i++){
+      osc('sawtooth',82,i*beat,beat*.9,.12,dest);
+      if(i%2===0) osc('square',220,i*beat,beat*.45,.06,dest);
+      if(i%4===2) osc('sine',440,i*beat+beat*.25,beat*.3,.05,dest);
+    }
+  } else if (style==='finance') {
+    const scale=[220,247,277,330,370,415,440,494];
+    for(let i=0;i<totalBeats*2;i++){
+      const f=scale[i%scale.length];
+      osc('sine',f,i*beat*.5,beat*.45,.09,dest);
+      if(i%4===0) osc('sine',f/2,i*beat*.5,beat*1.8,.06,dest);
+    }
+  } else if (style==='cinematic') {
+    const pads=[55,73,82,110,146];
+    pads.forEach((f,pi)=>{ for(let i=0;i<Math.ceil(durationSec/4);i++) osc('triangle',f,i*4+pi*.12,4,.06,dest); });
+    for(let i=0;i<totalBeats;i+=2) osc('sine',165,i*beat,beat*1.8,.04,dest);
+  } else if (style==='tech') {
+    const seq=[330,440,330,550,660,550,440,330,264,330];
+    for(let i=0;i<totalBeats*2;i++){
+      const f=seq[i%seq.length];
+      osc('square',f,i*beat*.5,beat*.4,.05,dest);
+      osc('sawtooth',f*.5,i*beat*.5,beat*.4,.04,dest);
+      if(i%4===0) osc('sine',110,i*beat*.5,beat*1.8,.07,dest);
+    }
+  } else if (style==='drama') {
+    const chord=[196,233,293,370];
+    chord.forEach((f,ci)=>{ for(let i=0;i<Math.ceil(durationSec/6);i++) { osc('sawtooth',f,i*6+ci*.08,5.8,.04,dest); osc('triangle',f*1.5,i*6+ci*.08,5.8,.025,dest); } });
+    for(let i=0;i<Math.ceil(durationSec/8);i++) osc('sine',98,i*8,7.8,.08,dest);
+  }
+}
+
+function updateMusicVol() {
+  S.musicVol = parseInt(document.getElementById('musicVol').value)/100;
+  document.getElementById('musicVolV').textContent = Math.round(S.musicVol*100)+'%';
+  if (S.musicGain) S.musicGain.gain.value=S.musicVol;
+}
+
+function setMusic(style,el) {
+  S.music=style;
+  document.querySelectorAll('.mcard').forEach(m=>m.classList.remove('on'));
+  el.classList.add('on'); stopMusic();
+  if (style!=='none') { startMusicPreview(); toast(`♪ ${style} track playing`,'t-info'); }
+}
+
+function playAlertBeeps() {
+  try {
+    const ctx=getACtx();
+    [[660,0],[660,.15],[880,.3]].forEach(([f,d])=>{
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.type='sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(0,ctx.currentTime+d);
+      g.gain.linearRampToValueAtTime(.2,ctx.currentTime+d+.02);
+      g.gain.linearRampToValueAtTime(0,ctx.currentTime+d+.12);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(ctx.currentTime+d); o.stop(ctx.currentTime+d+.15);
+    });
+  } catch(e){}
+}
+
+// ═══════════════════════════════════════════
+// HIGH-QUALITY VIDEO EXPORT
+// ═══════════════════════════════════════════
+async function startExport() {
+  if (!S.stories.length) { toast('No story loaded','t-err'); return; }
+
+  const q = QUALITY_MAP[S.quality];
+  const durationMs = S.duration * 1000;
+
+  const mimes = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+  const mimeType = mimes.find(m=>MediaRecorder.isTypeSupported(m));
+  if (!mimeType) { toast('Video recording not supported in this browser','t-err'); return; }
+
+  // UI: start recording state
+  document.getElementById('stageStatus').className='stage-status rec';
+  document.getElementById('stageStatus').textContent='● INITIALIZING...';
+  document.getElementById('stageProg').classList.add('show');
+  document.getElementById('metAuto').textContent = 'REC';
+  document.getElementById('metAuto').className = 'sys-metric-val rec';
+  document.getElementById('recChipDot')?.classList.add('blink');
+
+  // Setup canvas
+  const canvas = document.createElement('canvas');
+  canvas.width = q.w; canvas.height = q.h;
+  const ctx2d = canvas.getContext('2d');
+
+  // Audio setup
+  const aCtx = getACtx();
+  const masterGain = aCtx.createGain(); masterGain.gain.value=S.musicVol;
+  const audioDest = aCtx.createMediaStreamDestination(); masterGain.connect(audioDest);
+  stopMusic();
+  if (S.music !== 'none' && S.opts.audiomix) buildMusicTrack(S.music, aCtx, masterGain, S.duration);
+  if (S.opts.sound && S.opts.audiomix) {
+    [[660,0],[660,.15],[880,.3]].forEach(([f,d])=>{
+      const o=aCtx.createOscillator(), g=aCtx.createGain();
+      o.type='sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(0,aCtx.currentTime+d); g.gain.linearRampToValueAtTime(.18,aCtx.currentTime+d+.02); g.gain.linearRampToValueAtTime(0,aCtx.currentTime+d+.12);
+      o.connect(g); g.connect(masterGain); o.start(aCtx.currentTime+d); o.stop(aCtx.currentTime+d+.15);
+    });
+  }
+
+  const canvasStream = canvas.captureStream(S.fps);
+  const combined = new MediaStream([...canvasStream.getVideoTracks(), ...(S.opts.audiomix ? audioDest.stream.getAudioTracks():[])]);
+  const recorder = new MediaRecorder(combined, { mimeType, videoBitsPerSecond: S.bitrate });
+  const chunks=[];
+  recorder.ondataavailable = e=>{ if(e.data.size>0) chunks.push(e.data); };
+
+  recorder.onstop = () => {
+    stopMusic();
+    const blob = new Blob(chunks, {type:'video/webm'});
+    const fname = `signal-${S.quality}-${S.duration}s-${Date.now()}.webm`;
+    triggerDownload(blob, fname);
+
+    document.getElementById('stageStatus').className='stage-status ok';
+    document.getElementById('stageStatus').textContent=`✓ Exported ${S.quality} ${S.duration}s — check Downloads`;
+    document.getElementById('stageProg').classList.remove('show');
+    document.getElementById('metAuto').textContent = S.schedRunning?'ON':'OFF';
+    document.getElementById('metAuto').className = 'sys-metric-val' + (S.schedRunning?' live':'');
+    setTimeout(()=>{ document.getElementById('stageStatus').className='stage-status'; document.getElementById('stageStatus').textContent='Ready'; },5000);
+
+    toast(`✓ ${S.quality} ${S.duration}s video exported & downloaded`,'t-ok');
+
+    if (window._pendingYTUpload) { window._pendingYTUpload=false; uploadToYouTube(blob); }
+  };
+
+  // Play preview animation
+  playPreview();
+  recorder.start(150);
+
+  const snapMs = Math.round(1000 / S.captureRate);
+  const startT = Date.now();
+
+  async function snapLoop() {
+    const elapsed = Date.now() - startT;
+    const pct = Math.min(100, Math.round(elapsed/durationMs*100));
+    document.getElementById('stageProgBar').style.width = pct+'%';
+    document.getElementById('stageStatus').textContent = `● RECORDING ${pct}% — ${S.quality} / ${S.duration}s / ${S.bitrate/1e6}Mbps`;
+
+    try {
+      const frame = document.getElementById('shortsFrame');
+      const snap = await html2canvas(frame, { scale:q.scale, useCORS:true, allowTaint:true, backgroundColor:'#000000', logging:false, width:frame.offsetWidth, height:frame.offsetHeight });
+      ctx2d.clearRect(0,0,q.w,q.h);
+      ctx2d.drawImage(snap,0,0,q.w,q.h);
+    } catch(e){}
+
+    if (elapsed<durationMs) setTimeout(snapLoop, snapMs);
+    else recorder.stop();
+  }
+  snapLoop();
+}
+
+function triggerDownload(blob, fname) {
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=fname;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),3000);
+}
+
+async function exportPNG() {
+  if (!S.stories.length) { toast('No story loaded','t-err'); return; }
+  setStatus('Capturing frame...','');
+  try {
+    const q=QUALITY_MAP[S.quality];
+    const frame=document.getElementById('shortsFrame');
+    const snap=await html2canvas(frame,{scale:q.scale,useCORS:true,allowTaint:true,backgroundColor:'#000000',logging:false});
+    snap.toBlob(b=>{ triggerDownload(b,`signal-frame-${S.quality}-${Date.now()}.png`); toast(`✓ ${S.quality} PNG exported`,'t-ok'); setStatus('Frame exported','ok'); },'image/png');
+  } catch(e) { toast('PNG failed: '+e.message,'t-err'); }
+}
+
+// ═══════════════════════════════════════════
+// YOUTUBE
+// ═══════════════════════════════════════════
+function openYTModal() { document.getElementById('ytModal').classList.add('show'); }
+function closeYTModal() { document.getElementById('ytModal').classList.remove('show'); }
+
+function startYTAuth() {
+  const clientId = document.getElementById('ytClientId').value.trim();
+  if (!clientId) { toast('Enter your OAuth Client ID in Settings → YouTube API','t-err'); return; }
+  const scope = 'https://www.googleapis.com/auth/youtube.upload';
+  const redirectUri = window.location.href.split('?')[0].split('#')[0];
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${encodeURIComponent(scope)}`;
+  window.open(url,'_blank','width=520,height=620');
+  closeYTModal();
+  toast('Complete Google sign-in in the popup','t-info');
+}
+
+function checkOAuthCallback() {
+  const hash=window.location.hash;
+  if (!hash.includes('access_token=')) return;
+  const p=new URLSearchParams(hash.substring(1));
+  S.ytToken=p.get('access_token');
+  document.getElementById('ytConnectBtn').textContent='✓ CONNECTED';
+  document.getElementById('ytConnectBtn').classList.add('connected');
+  toast('✓ YouTube connected!','t-ok');
+  window.location.hash='';
+}
+checkOAuthCallback();
+
+async function uploadToYouTube(blob) {
+  if (!S.ytToken) { toast('Connect YouTube first','t-err'); return; }
+  const s=S.stories[S.storyIdx];
+  const titleTpl=document.getElementById('ytTitleTpl').value;
+  const title=titleTpl.replace('{headline}',s?.headline||'Breaking').replace('{category}',s?.tag||'News').replace('{date}',new Date().toLocaleDateString()).substring(0,100);
+  const tags=document.getElementById('ytTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const descTpl=document.getElementById('ytDesc')?.value||'{subtext}\n\n#shorts';
+  const description=descTpl.replace('{headline}',s?.headline||'').replace('{subtext}',s?.subtext||'');
+
+  setStatus('Uploading to YouTube...','rec');
+  toast('📤 Uploading to YouTube...','t-info');
+
+  try {
+    const metaRes=await fetch('https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${S.ytToken}`,'Content-Type':'application/json','X-Upload-Content-Type':'video/webm','X-Upload-Content-Length':blob.size},
+      body:JSON.stringify({
+        snippet:{title,description,tags,categoryId:'25',defaultLanguage:'en'},
+        status:{privacyStatus:'public',madeForKids:false}
+      })
+    });
+    const uploadUrl=metaRes.headers.get('Location');
+    if (!uploadUrl) throw new Error('No upload URL. Check OAuth token and API quota.');
+
+    const uploadRes=await fetch(uploadUrl,{method:'PUT',headers:{'Content-Type':'video/webm','Content-Length':blob.size},body:blob});
+    if (!uploadRes.ok) throw new Error(`Upload failed: ${uploadRes.status}`);
+    const result=await uploadRes.json();
+
+    const videoId=result.id;
+    setStatus('Posted!','ok');
+    toast(`✓ Published! youtube.com/shorts/${videoId}`,'t-ok');
+
+    // Track publication
+    S.published.push({...s, videoId, time: new Date().toLocaleTimeString(), status:'published'});
+    document.getElementById('metPublished').textContent = S.published.length;
+    document.getElementById('sbPub').textContent = S.published.length;
+    refreshAnalytics();
+
+  } catch(e) {
+    setStatus('Upload failed','err');
+    toast('YT error: '+e.message,'t-err');
+  }
+}
+
+async function uploadStory(headline) {
+  if (!S.ytToken) { toast('Connect YouTube in Settings → YouTube API','t-err'); return; }
+  const s=S.stories.find(x=>x.headline===headline)||S.queue.find(x=>x.headline===headline);
+  if (s) { const idx=S.stories.indexOf(s); if(idx>=0)S.storyIdx=idx; loadStoryToStudio(S.storyIdx); }
+  window._pendingYTUpload=true;
+  await startExport();
+}
+
+// ═══════════════════════════════════════════
+// AUTOMATION
+// ═══════════════════════════════════════════
+function toggleAutomation() {
+  if (S.schedRunning) stopAutomation();
+  else startAutomation();
+}
+
+function startAutomation() {
+  if (!S.ytToken) { toast('Connect YouTube first (Settings → YouTube API)','t-err'); gotoView('settings',document.querySelector('.snav-item:nth-child(4)')); setTimeout(()=>switchSettingsSection('youtube',document.querySelector('.snav-link:nth-child(4)')),100); return; }
+  S.schedRunning=true;
+  document.getElementById('autoStartBtn').textContent='⏹ STOP AUTOMATION ENGINE';
+  document.getElementById('autoStartBtn').className='btn-full btn-ghost';
+  document.getElementById('metAuto').textContent='ON';
+  document.getElementById('metAuto').className='sys-metric-val live';
+  document.getElementById('sbNextPost').style.display='flex';
+  scheduleNext();
+  toast(`✓ Automation started — posts every ${S.schedHours}h`,'t-ok');
+}
+
+function stopAutomation() {
+  S.schedRunning=false;
+  clearTimeout(S.schedTimer);
+  clearInterval(S.schedCountdown);
+  document.getElementById('autoStartBtn').textContent='▶ START AUTOMATION ENGINE';
+  document.getElementById('autoStartBtn').className='btn-full btn-cyan';
+  document.getElementById('metAuto').textContent='OFF';
+  document.getElementById('metAuto').className='sys-metric-val';
+  document.getElementById('schedCountdown').textContent='NOT SCHEDULED';
+  document.getElementById('sbNextPost').style.display='none';
+  document.getElementById('automationStatusText').textContent='Status: Stopped';
+  toast('Automation stopped','t-info');
+}
+
+function scheduleNext() {
+  if (!S.schedRunning) return;
+  S.nextPostAt=Date.now()+S.schedHours*3600000;
+  clearInterval(S.schedCountdown);
+  S.schedCountdown=setInterval(()=>{
+    if (!S.nextPostAt) return;
+    const rem=S.nextPostAt-Date.now();
+    if (rem<=0) return;
+    const h=Math.floor(rem/3600000), m=Math.floor((rem%3600000)/60000), s=Math.floor((rem%60000)/1000);
+    const str=h>0?`${h}h ${m}m`:`${m}m ${s}s`;
+    document.getElementById('sbNextPostTime').textContent=str;
+    document.getElementById('automationStatusText').textContent=`Running — next post in ${str}`;
+  },1000);
+
+  S.schedTimer=setTimeout(async()=>{
+    if (!S.schedRunning) return;
+    toast('🤖 Automation: fetching news + posting...','t-info');
+    await fetchNews();
+    await new Promise(r=>setTimeout(r,2000));
+    window._pendingYTUpload=true;
+    await startExport();
+    scheduleNext();
+  },S.schedHours*3600000);
+}
+
+async function manualPost() {
+  if (!S.ytToken) { toast('Connect YouTube first','t-err'); return; }
+  if (!S.stories.length) { toast('Fetch news first','t-err'); return; }
+  window._pendingYTUpload=true;
+  await startExport();
+}
+
+// ═══════════════════════════════════════════
+// ANALYTICS
+// ═══════════════════════════════════════════
+function refreshAnalytics() {
+  document.getElementById('kpiPublished').textContent=S.published.length;
+  document.getElementById('kpiQueue').textContent=S.queue.length;
+  document.getElementById('kpiAuto').textContent=S.schedRunning?'ON':'OFF';
+  document.getElementById('kpiTopics').textContent=S.niches.size;
+
+  const tbody=document.getElementById('historyBody');
+  if (!S.published.length) { tbody.innerHTML='<tr><td colspan="4" style="color:var(--text3);font-size:11px;padding:16px 8px">No publications yet</td></tr>'; return; }
+  tbody.innerHTML=[...S.published].reverse().slice(0,10).map(p=>`
+    <tr>
+      <td>${p.headline.substring(0,36)}...</td>
+      <td><span class="badge" style="background:#0a0a18;color:var(--text3)">${p.tag}</span></td>
+      <td><span class="badge pub">PUBLISHED</span></td>
+      <td style="font-family:var(--mono);font-size:10px">${p.time}</td>
+    </tr>`).join('');
+}
+
+// ═══════════════════════════════════════════
+// MISC HELPERS
+// ═══════════════════════════════════════════
+function restartTicker(text) {
+  const t=document.getElementById('sfTickerText');
+  if(text) t.textContent=text;
+  t.style.animation='none'; t.offsetHeight; t.style.animation='tickScroll 18s linear infinite';
+}
+
+function updateMetrics() {
+  document.getElementById('metStories').textContent=S.stories.length;
+  document.getElementById('metQueue').textContent=S.queue.length;
+  document.getElementById('metPublished').textContent=S.published.length;
+  document.getElementById('sbStories').textContent=S.stories.length;
+  document.getElementById('sbPub').textContent=S.published.length;
+  document.getElementById('kpiTopics').textContent=S.niches.size;
+}
+
+function setStatus(text, type) {
+  const dot=document.getElementById('sbDot');
+  const t=document.getElementById('sbText');
+  t.textContent=text;
+  dot.className='sb-dot';
+  if(type==='ok'||type==='live') dot.classList.add('green');
+  else if(type==='rec'||type==='err') dot.classList.add('red');
+  else dot.classList.add('grey');
+}
+
+let _toastId=0;
+function toast(msg, cls='t-ok') {
+  const container=document.getElementById('toastContainer');
+  const id=++_toastId;
+  const el=document.createElement('div');
+  el.className=`toast-item ${cls}`;
+  el.textContent=msg;
+  container.appendChild(el);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>el.classList.add('show')); });
+  setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),300); },3500);
+}
+
+function saveSettings() {
+  try { localStorage.setItem('ss_ytClientId',document.getElementById('ytClientId').value); localStorage.setItem('ss_ytApiKey',document.getElementById('ytApiKey').value); } catch(e){}
+}
+function loadSettings() {
+  try { document.getElementById('ytClientId').value=localStorage.getItem('ss_ytClientId')||''; document.getElementById('ytApiKey').value=localStorage.getItem('ss_ytApiKey')||''; } catch(e){}
+}
+loadSettings();
+
+// ═══════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
+  if (e.key==='f'||e.key==='F') fetchNews();
+  if (e.key===' ') { e.preventDefault(); playPreview(); }
+  if (e.key==='ArrowRight') nextStory();
+  if (e.key==='ArrowLeft') prevStory();
+  if (e.key==='e'||e.key==='E') startExport();
+  if (e.key==='p'||e.key==='P') exportPNG();
+  if (e.key==='1') document.querySelector('.snav-item:nth-child(1)')?.click();
+  if (e.key==='2') document.querySelector('.snav-item:nth-child(2)')?.click();
+  if (e.key==='3') document.querySelector('.snav-item:nth-child(3)')?.click();
+  if (e.key==='4') document.querySelector('.snav-item:nth-child(4)')?.click();
+  if (e.key==='Escape') { document.getElementById('ytModal').classList.remove('show'); }
+});
+
+// Close modal on bg click
+document.getElementById('ytModal').addEventListener('click', e=>{ if(e.target===document.getElementById('ytModal')) closeYTModal(); });
+</script>
+</body>
+</html>
